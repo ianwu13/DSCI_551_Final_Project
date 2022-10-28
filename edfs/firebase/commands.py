@@ -1,14 +1,64 @@
-import argparse
-import string
-import requests
-import json
+import requests as r
 
-from ..creds import FB_CONNECTION_URL
-        
+from creds import FB_BASE_URL
+
+
+NUM_DATANODES = 2
+
+
+def get_next_datanode(cur_datanode: int):
+    return (cur_datanode) % NUM_DATANODES + 1
+    
+
+def get_next_b_num(dn: str):
+    b = r.get(f'{FB_BASE_URL}{dn}/next_block.json').text
+    if b == 'null':
+        r.put(f'{FB_BASE_URL}{dn}/next_block.json', '2')
+        return 1
+    else:
+        r.put(f'{FB_BASE_URL}{dn}/next_block.json', f'{int(b)+1}')
+        return int(b)
+
+
+def preprocess_path(path: str):
+    if path[-1] == '/':
+        path = path[:-1]
+    if path[:6] == '/root/':
+        path = path[6:]
+    elif path[0] == '/':
+        path = path[1:]
+    return ''.join(['namenode/root/', path])
+
+
+def check_exists(dest_path: str):
+    if r.get(dest_path).text != 'null':
+        return True
+    else:
+        return False
+
+
+def handle_empty_dir(dir_path: str):
+    if r.get(dir_path).text == '0':
+        r.delete(dir_path)
+        return True
+    else:
+        return False
+
 
 def mkdir(path: str): 
     # create a directory in file system, e.g., mkdir /user/john
-    pass
+
+    if '.' in path:
+        return 'INVALID PATH'
+    else:
+        path = preprocess_path(path)
+
+    # Check if directory already exists
+    if check_exists(f'{FB_BASE_URL}{path}.json'):
+        return 'DIRECTORY ALREADY EXISTS'
+    else:
+        r.put(f'{FB_BASE_URL}{path}.json', '0')
+        return 'DIRECTORY CREATED SUCCESFULLY'
 
 
 '''
@@ -65,7 +115,7 @@ call put('file2.txt', 'user/', 2)
     go to firebase
     insert *"file2.txt": {"p1": 125, "p2": 126}*
 '''
-def put(file_path: str, destination_path: str, k: int): 
+def put(file_path: str, destination_path: str, k: str): 
     '''
     uploading a file to file system, e.g., put(cars.csv, /user/john, k = # partitions) will
     upload a file cars.csv to the directory /user/john in EDFS. But note that the file
@@ -74,7 +124,42 @@ def put(file_path: str, destination_path: str, k: int):
     also have the user indicate the method, e.g., hashing on certain car attribute, in the
     put method. 
     '''
-    pass
+    try:
+        k = int(k)
+    except:
+        return 'ARGUMENT FOR K MUST BE INTEGER'
+    f_name = file_path.split('/')[-1].replace('.', '-')
+    destination_path = f'{preprocess_path(destination_path)}/{f_name}'
+
+    # Check if file already exists
+    if check_exists(f'{FB_BASE_URL}{destination_path}.json'):
+        return 'FILE ALREADY EXISTS IN EDFS'
+    else:
+        try:
+            f = open(file_path, 'r')
+        except:
+            return 'INVALID FILE PATH'
+        lines = f.readlines()
+
+        if len(lines) < k:
+            k = len(lines)
+        cur_datanode = 1
+        for p in range(k):
+            datanode = f'datanode_{cur_datanode}'
+            dn_b_num = get_next_b_num(datanode)
+            r.put(f'{FB_BASE_URL}{destination_path}/p{p+1}.json', f'"{datanode}-{dn_b_num}"')
+
+            data = ''
+            i = p
+            while i < len(lines):
+                data = ''.join([data, lines[i].replace('"', '').replace('\n', '\\n')])
+                i += k
+
+            r.put(f'{FB_BASE_URL}{datanode}/{dn_b_num}.json', f'"{data}"')
+
+            cur_datanode = get_next_datanode(cur_datanode)
+
+        return 'FILE UPLOADED SUCCESFULLY'
 
 
 def getPartitionLocations(path: str): 
