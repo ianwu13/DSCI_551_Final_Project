@@ -1,4 +1,5 @@
 import requests as r
+import json
 
 from creds import FB_BASE_URL
 
@@ -87,7 +88,21 @@ def ls(path: str='.'):
 
 def cat(path: str): 
     # display content of a file, e.g., cat /user/john/hello.txt
-    pass
+    path = preprocess_path(path.replace('.', '-'))
+
+    partitions = json.loads(r.get(f'{FB_BASE_URL}{path}.json').text)
+    data = []
+    for p in partitions:
+        data.append(r.get(f'{FB_BASE_URL}{partitions[p].replace("-", "/")}.json').text.replace('"', '').split('\\n'))
+
+    output = ''
+    for i in range(len(data[0])):
+        for j in range(len(data)):
+            try:
+                line = data[j][i]
+            except:
+                return output
+            output = ''.join([output, f'{line}\n'])
 
 
 def rm(path: str): 
@@ -149,11 +164,9 @@ def put(file_path: str, destination_path: str, k: str):
             dn_b_num = get_next_b_num(datanode)
             r.put(f'{FB_BASE_URL}{destination_path}/p{p+1}.json', f'"{datanode}-{dn_b_num}"')
 
-            data = ''
-            i = p
-            while i < len(lines):
-                data = ''.join([data, lines[i].replace('"', '').replace('\n', '\\n')])
-                i += k
+            data = lines[p].replace('"', '').replace('\n', '')
+            for i in range(p+k, len(lines), k):
+                data = '\\n'.join([data, lines[i].replace('"', '').replace('\n', '')])
 
             r.put(f'{FB_BASE_URL}{datanode}/{dn_b_num}.json', f'"{data}"')
 
