@@ -1,3 +1,4 @@
+from regex import D
 import requests as r
 import json
 
@@ -22,7 +23,9 @@ def get_next_b_num(dn: str):
 
 
 def preprocess_path(path: str):
-    if path[-1] == '/':
+    if path == '.':
+        return 'namenode/root/'
+    elif path[-1] == '/':
         path = path[:-1]
     if path[:6] == '/root/':
         path = path[6:]
@@ -81,16 +84,28 @@ currently in firebase:
         }
 }
 '''
-def ls(path: str='.'): 
+def ls(path: str): 
     # listing content of a given directory, e.g., ls /user
-    pass
+
+    if '.' in path:
+        return 'NOT A DIRECTORY'
+
+    path = preprocess_path(path)
+    keys = json.loads(r.get(f'{FB_BASE_URL}{path}.json').text)
+    if keys == 0:
+        return ''
+    return '\n'.join(keys)
 
 
 def cat(path: str): 
     # display content of a file, e.g., cat /user/john/hello.txt
+    if '.' not in path.split('/')[-1]:
+        return 'PATH MUST BE A FILE'
     path = preprocess_path(path.replace('.', '-'))
 
     partitions = json.loads(r.get(f'{FB_BASE_URL}{path}.json').text)
+    if partitions == 'null' or partitions == None:
+        return 'FILE NOT FOUND'
     data = []
     for p in partitions:
         data.append(r.get(f'{FB_BASE_URL}{partitions[p].replace("-", "/")}.json').text.replace('"', '').split('\\n'))
@@ -107,7 +122,31 @@ def cat(path: str):
 
 def rm(path: str): 
     # remove a file from the file system, e.g., rm /user/john/hello.txt
-    pass
+
+    if '.' not in path.split('/')[-1]:
+        # Handle Directory
+        path = preprocess_path(path)
+        parent_path = '/'.join(path.split('/')[:-1])
+        if len(json.loads(r.get(f'{FB_BASE_URL}{parent_path}.json').text)) < 2:
+            r.put(f'{FB_BASE_URL}{parent_path}.json', '0')
+        else:
+            r.delete(f'{FB_BASE_URL}{path}.json')
+        
+        return 'DONE - NOTE: PARTITIONS FOR SUBFILES NOT DELETED'
+    else:
+        # Handle File
+        path = preprocess_path(path).replace('.', '-')
+        partitions = json.loads(r.get(f'{FB_BASE_URL}{path}.json').text).values()
+        for p in partitions:
+            r.delete(f'{FB_BASE_URL}{p.replace("-", "/")}.json')
+
+        parent_path = '/'.join(path.split('/')[:-1])
+        if len(json.loads(r.get(f'{FB_BASE_URL}{parent_path}.json').text)) < 2:
+            r.put(f'{FB_BASE_URL}{parent_path}.json', '0')
+        else:
+            r.delete(f'{FB_BASE_URL}{path}.json')
+
+        return 'DONE'
 
 
 '''
@@ -144,7 +183,10 @@ def put(file_path: str, destination_path: str, k: str):
     except:
         return 'ARGUMENT FOR K MUST BE INTEGER'
     f_name = file_path.split('/')[-1].replace('.', '-')
-    destination_path = f'{preprocess_path(destination_path)}/{f_name}'
+    if '.' not in destination_path.split('/')[-1]:
+        destination_path = f'{preprocess_path(destination_path)}/{f_name}'
+    else:
+        destination_path = preprocess_path(destination_path).replace('.', '-')
 
     # Check if file already exists
     if check_exists(f'{FB_BASE_URL}{destination_path}.json'):
@@ -177,7 +219,16 @@ def put(file_path: str, destination_path: str, k: str):
 
 def getPartitionLocations(path: str): 
     # this method will return the locations of partitions of the file.
-    pass
+
+    if '.' not in path:
+        return 'PATH MUST BE A FILE'
+
+    path = preprocess_path(path).replace('.', '-')
+    partitions = json.loads(r.get(f'{FB_BASE_URL}{path}.json').text)
+    if (not (type(partitions) == dict)) or len(partitions) == 0:
+        return 'NO DATA FOUND FOR FILE'
+
+    return '\n'.join(partitions.values())
 
 
 def readPartition(path: str, partition: int):
@@ -186,4 +237,17 @@ def readPartition(path: str, partition: int):
     the specified file. The portioned data will be needed in the second task for parallel
     processing.
     '''
-    pass
+
+    if '.' not in path:
+        return 'PATH MUST BE A FILE'
+
+    path = preprocess_path(path).replace('.', '-')
+    if r.get(f'{FB_BASE_URL}{path}.json').text == 'null':
+        return 'FILE DOES NOT EXIST'
+
+    part_ptr = r.get(f'{FB_BASE_URL}{path}/p{partition}.json').text
+    if part_ptr == 'null':
+        return 'INVALID PARTITION'
+
+    return part_ptr
+
