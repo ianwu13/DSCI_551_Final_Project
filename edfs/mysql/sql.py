@@ -4,7 +4,7 @@ import pymysql
 from sqlalchemy.sql import text
 import pandas as pd
 
-sql_server = 'mysql://root:weiye0726@localhost/project'
+sql_server = "your_sql_server"
 pymysql.install_as_MySQLdb()
 engine = db.create_engine(sql_server)
 connection = engine.connect()
