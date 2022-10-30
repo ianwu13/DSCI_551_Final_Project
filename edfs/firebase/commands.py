@@ -1,4 +1,3 @@
-from regex import D
 import requests as r
 import json
 
