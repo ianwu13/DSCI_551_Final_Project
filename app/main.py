@@ -1,6 +1,6 @@
 # import requirements needed
 from flask import Flask, render_template
-from utils import get_base_url
+from utils import *
 
 # setup the webserver
 # port may need to be changed if there are multiple flask servers running on same server
@@ -14,9 +14,39 @@ else:
     app = Flask(__name__, static_url_path=base_url+'static')
 
 # set up the routes and logic for the webserver
+
+
 @app.route(f'{base_url}')
 def home():
-    return render_template('index.html')
+    from edfs.firebase.commands import ls, mkdir, cat, put, rm, getPartitionLocations, readPartition
+    def test():
+        return 'TEST'
+    return render_template('index.html', content=render_template('terminal.html', term_sel=['Selected', 'Select', 'Select'], fun=test))
+
+# set up the routes and logic for the webserver
+
+
+@app.route(f'/firebase_term')
+def fb_term():
+    from edfs.firebase.commands import ls, mkdir, cat, put, rm, getPartitionLocations, readPartition
+    return render_template('index.html', content=render_template('terminal.html', term_sel=['Selected', 'Select', 'Select']))
+
+# set up the routes and logic for the webserver
+
+
+@app.route(f'/mongo_term')
+def mongo_term():
+    from edfs.mongodb.commands import ls, mkdir, cat, put, rm, getPartitionLocations, readPartition
+    return render_template('index.html', content=render_template('terminal.html', term_sel=['Select', 'Selected', 'Select']))
+
+# set up the routes and logic for the webserver
+
+
+@app.route(f'/mysql_term')
+def mysql_term():
+    from edfs.mysql.commands import ls, mkdir, cat, put, rm, getPartitionLocations, readPartition
+    return render_template('index.html', content=render_template('terminal.html', term_sel=['Select', 'Select', 'Selected']))
+
 
 @app.route(f'/example')
 def example():
@@ -28,10 +58,11 @@ def example():
 # def team_members():
 #     return render_template('team_members.html') # would need to actually make this page
 
+
 if __name__ == '__main__':
     # IMPORTANT: change url to the site where you are editing this file.
     # website_url = 'cocalc4.ai-camp.org'
     website_url = f'localhost:{port}'
-    
+
     print(f'Try to open\n\n    {website_url}' + base_url + '\n\n')
-    app.run(host = '0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=True)
