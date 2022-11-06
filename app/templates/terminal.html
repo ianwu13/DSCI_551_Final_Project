@@ -1,3 +1,5 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
 <script>
     function update_sel_buttons(selected) {
         if (selected === "firebase") {
@@ -33,16 +35,37 @@
         }
     }
 
-    function switch_imp(imp) {
-        update_sel_buttons(imp)
+    function make_call(input) {
+        var jsonCall = $.ajax({
+            method: 'POST',
+            url: '/command',
+            dataType: "json",
+            data: {'imp': '{{imp}}', 'comm': input},
+            async: false
+        });
+        return jsonCall.responseText
+    }
 
+    function run_comm() {
+        input = document.getElementById('command_input').value
+        if (!input) {
+            return
+        }
+        document.getElementById('command_input').value = ''
+
+        comm_html = "<a> >>> " + input + "</a></br>"
+        document.getElementById('term_history').innerHTML += comm_html
+
+        call = make_call(input)
+        res = "<a>" + call + "</a></br>"
+        document.getElementById('term_history').innerHTML += res
     }
 </script>
 
 <div class="container-fluid px-4">
     <div class="row" style="padding-top: 16px">
         <div class="col-xl-3 col-md-6">
-            <h1 class="mt-1" styl>EDFS Explorer {{fun()}}</h1>
+            <h1 class="mt-1" styl>EDFS Explorer</h1>
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item active">Select an implementation to begin</li>
             </ol>
@@ -77,20 +100,13 @@
             <i class="fas fa-table me-1"></i>
             Terminal   
         </div>
-        <div class="card-body">
-            <table id="datatablesSimple">
-                <tbody id="'term_history">
-                    <tr>
-                        >>> mkdir test
-                    </tr>
-                </tbody>
-            </table>
+        <div id="term_history" class="card-body">
         </div>
     </div>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <input id='command_input' type="text" class="form-control" placeholder="Enter Command" aria-label="Recipient's username" aria-describedby="basic-addon2">
         <div class="input-group-append">
-            <span class="input-group-text" id="basic-addon2" onclick="">Run Command</span>
+            <span class="input-group-text btn btn-light border-dark" id="basic-addon2" onclick="run_comm()">Run Command</span>
         </div>
     </div>
 </div>

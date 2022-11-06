@@ -19,7 +19,3 @@ def get_base_url(port:int) -> str:
         print(f'Server is probably running in production, so a base url does not apply: \n{e}')
         base_url = '/'
     return base_url
-
-
-def switch_imp(imp: str):
-    print(imp)

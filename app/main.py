@@ -1,5 +1,5 @@
 # import requirements needed
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from utils import *
 
 # setup the webserver
@@ -15,38 +15,76 @@ else:
 
 # set up the routes and logic for the webserver
 
+@app.route(f'/command', methods=['POST'])
+def command_caller():
+    imp = request.form['imp']
+    if imp == 'firebase':
+        import edfs.firebase.commands as com
+    elif imp == 'mongo':
+        import edfs.mongodb.commands as com
+    elif imp == 'mysql':
+        import edfs.mysql.commands as com
+    else:
+        return 'INVALID INPUT' 
+     
+    split = request.form['comm'].split(' ')
+    call = split[0]
+    if call == 'mkdir':
+        if len(split) != 2:
+            return 'Incorrect Number of Arguments'
+        else:
+            return com.mkdir(split[1])
+    elif call == 'ls':
+        if len(split) != 2:
+            return 'Incorrect Number of Arguments'
+        else:
+            print(split[1])
+            return com.ls(split[1]).replace('\n', '</br>')
+    elif call == 'cat':
+        if len(split) != 2:
+            return 'Incorrect Number of Arguments'
+        else:
+            return com.cat(split[1]).replace('\n', '</br>')
+    elif call == 'rm':
+        if len(split) != 2:
+            return 'Incorrect Number of Arguments'
+        else:
+            return com.rm(split[1])
+    elif call == 'put':
+        if len(split) != 4:
+            return 'Incorrect Number of Arguments'
+        else:
+            return com.put(split[1], split[2], split[3])
+    elif call == 'getPartitionLocations':
+        if len(split) != 2:
+            return 'Incorrect Number of Arguments'
+        else:
+            return com.getPartitionLocations(split[1]).replace('\n', '</br>')
+    elif call == 'readPartition':
+        if len(split) != 3:
+            return 'Incorrect Number of Arguments'
+        else:
+            return com.readPartition(split[1], split[2]).replace('\n', '</br>')
+    else:
+        return ('Invalid Command.')
+    
+    return 'DONE'
 
 @app.route(f'{base_url}')
 def home():
-    from edfs.firebase.commands import ls, mkdir, cat, put, rm, getPartitionLocations, readPartition
-    def test():
-        return 'TEST'
-    return render_template('index.html', content=render_template('terminal.html', term_sel=['Selected', 'Select', 'Select'], fun=test))
-
-# set up the routes and logic for the webserver
-
+    return render_template('index.html', content=render_template('terminal.html', term_sel=['Selected', 'Select', 'Select'], imp='firebase'))
 
 @app.route(f'/firebase_term')
 def fb_term():
-    from edfs.firebase.commands import ls, mkdir, cat, put, rm, getPartitionLocations, readPartition
-    return render_template('index.html', content=render_template('terminal.html', term_sel=['Selected', 'Select', 'Select']))
-
-# set up the routes and logic for the webserver
-
+    return render_template('index.html', content=render_template('terminal.html', term_sel=['Selected', 'Select', 'Select'], imp='firebase'))
 
 @app.route(f'/mongo_term')
 def mongo_term():
-    from edfs.mongodb.commands import ls, mkdir, cat, put, rm, getPartitionLocations, readPartition
-    return render_template('index.html', content=render_template('terminal.html', term_sel=['Select', 'Selected', 'Select']))
-
-# set up the routes and logic for the webserver
-
+    return render_template('index.html', content=render_template('terminal.html', term_sel=['Select', 'Selected', 'Select'], imp='mongodb'))
 
 @app.route(f'/mysql_term')
 def mysql_term():
-    from edfs.mysql.commands import ls, mkdir, cat, put, rm, getPartitionLocations, readPartition
-    return render_template('index.html', content=render_template('terminal.html', term_sel=['Select', 'Select', 'Selected']))
-
+    return render_template('index.html', content=render_template('terminal.html', term_sel=['Select', 'Select', 'Selected'], imp='mysql'))
 
 @app.route(f'/example')
 def example():

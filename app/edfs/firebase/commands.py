@@ -1,5 +1,6 @@
 import requests as r
 import json
+import pandas as pd
 
 from edfs.creds import FB_BASE_URL
 
@@ -93,7 +94,7 @@ def ls(path: str):
     keys = json.loads(r.get(f'{FB_BASE_URL}{path}.json').text)
     if keys == 0:
         return ''
-    return '\n'.join(keys)
+    return '\n'.join([k.replace('-', '.') for k in keys])
 
 
 def cat(path: str): 
@@ -107,16 +108,17 @@ def cat(path: str):
         return 'FILE NOT FOUND'
     data = []
     for p in partitions:
-        data.append(r.get(f'{FB_BASE_URL}{partitions[p].replace("-", "/")}.json').text.replace('"', '').split('\\n'))
+        data.append(list(json.loads(r.get(f'{FB_BASE_URL}{partitions[p].replace("-", "/")}.json').text).values()))
 
-    output = ''
+    output = ', '.join(data[0][0].keys())
     for i in range(len(data[0])):
         for j in range(len(data)):
             try:
                 line = data[j][i]
             except:
                 return output
-            output = ''.join([output, f'{line}\n'])
+            output = '\n'.join([output, ', '.join([str(v) for v in line.values()])])
+    return output
 
 
 def rm(path: str): 
@@ -185,6 +187,8 @@ def put(file_path: str, destination_path: str, k: str):
     if '.' not in destination_path.split('/')[-1]:
         destination_path = f'{preprocess_path(destination_path)}/{f_name}'
     else:
+        if destination_path.split('')[-1] != 'csv':
+            return 'INVALID FILE TYPE, ONLY CSV IS CURRENTLY SUPPORTED'
         destination_path = preprocess_path(destination_path).replace('.', '-')
 
     # Check if file already exists
@@ -192,24 +196,21 @@ def put(file_path: str, destination_path: str, k: str):
         return 'FILE ALREADY EXISTS IN EDFS'
     else:
         try:
-            f = open(file_path, 'r')
+            df = pd.read_csv(file_path)
+            df.index = pd.RangeIndex(start=1, stop=len(df)+1)
         except:
             return 'INVALID FILE PATH'
-        lines = f.readlines()
 
-        if len(lines) < k:
-            k = len(lines)
+        if len(df) < k:
+            k = len(df)
         cur_datanode = 1
         for p in range(k):
             datanode = f'datanode_{cur_datanode}'
             dn_b_num = get_next_b_num(datanode)
             r.put(f'{FB_BASE_URL}{destination_path}/p{p+1}.json', f'"{datanode}-{dn_b_num}"')
 
-            data = lines[p].replace('"', '').replace('\n', '')
-            for i in range(p+k, len(lines), k):
-                data = '\\n'.join([data, lines[i].replace('"', '').replace('\n', '')])
-
-            r.put(f'{FB_BASE_URL}{datanode}/{dn_b_num}.json', f'"{data}"')
+            data = df.iloc[p::k, :].to_json(orient="index")
+            r.put(f'{FB_BASE_URL}{datanode}/{dn_b_num}.json', str(data))
 
             cur_datanode = get_next_datanode(cur_datanode)
 
@@ -230,23 +231,26 @@ def getPartitionLocations(path: str):
     return '\n'.join(partitions.values())
 
 
-def readPartition(path: str, partition: int):
+def readPartition(path: str, partition: str):
     '''
     this method will return the content of partition # of
     the specified file. The portioned data will be needed in the second task for parallel
     processing.
     '''
 
-    if '.' not in path:
+    if '.' not in path.split('/')[-1]:
         return 'PATH MUST BE A FILE'
+    path = preprocess_path(path.replace('.', '-'))
 
-    path = preprocess_path(path).replace('.', '-')
     if r.get(f'{FB_BASE_URL}{path}.json').text == 'null':
         return 'FILE DOES NOT EXIST'
 
-    part_ptr = r.get(f'{FB_BASE_URL}{path}/p{partition}.json').text
-    if part_ptr == 'null':
+    data = json.loads(r.get(f'{FB_BASE_URL}{partition.replace("-", "/")}.json').text)
+    if not data:
         return 'INVALID PARTITION'
-
-    return part_ptr
-
+    else:
+        data = list(data.values())
+    output = ', '.join(data[0].keys())
+    for d in data:
+        output = '\n'.join([output, ', '.join([str(v) for v in d.values()])])
+    return output
