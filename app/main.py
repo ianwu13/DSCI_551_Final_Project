@@ -14,6 +14,20 @@ else:
     app = Flask(__name__, static_url_path=base_url+'static')
 
 # set up the routes and logic for the webserver
+@app.route(f'{base_url}')
+def home():
+    return render_template('index.html', content=render_template('terminal.html'))
+
+@app.route(f'/example')
+def example():
+    return render_template('example.html')
+
+
+# define additional routes here
+# for example:
+# @app.route(f'{base_url}/team_members')
+# def team_members():
+#     return render_template('team_members.html') # would need to actually make this page
 
 @app.route(f'/command', methods=['POST'])
 def command_caller():
@@ -69,32 +83,6 @@ def command_caller():
         return ('Invalid Command.')
     
     return 'DONE'
-
-@app.route(f'{base_url}')
-def home():
-    return render_template('index.html', content=render_template('terminal.html', term_sel=['Selected', 'Select', 'Select'], imp='firebase'))
-
-@app.route(f'/firebase_term')
-def fb_term():
-    return render_template('index.html', content=render_template('terminal.html', term_sel=['Selected', 'Select', 'Select'], imp='firebase'))
-
-@app.route(f'/mongo_term')
-def mongo_term():
-    return render_template('index.html', content=render_template('terminal.html', term_sel=['Select', 'Selected', 'Select'], imp='mongodb'))
-
-@app.route(f'/mysql_term')
-def mysql_term():
-    return render_template('index.html', content=render_template('terminal.html', term_sel=['Select', 'Select', 'Selected'], imp='mysql'))
-
-@app.route(f'/example')
-def example():
-    return render_template('example.html')
-
-# define additional routes here
-# for example:
-# @app.route(f'{base_url}/team_members')
-# def team_members():
-#     return render_template('team_members.html') # would need to actually make this page
 
 
 if __name__ == '__main__':

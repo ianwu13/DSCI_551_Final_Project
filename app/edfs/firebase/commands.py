@@ -27,10 +27,13 @@ def preprocess_path(path: str):
         return 'namenode/root/'
     elif path[-1] == '/':
         path = path[:-1]
-    if path[:6] == '/root/':
-        path = path[6:]
-    elif path[0] == '/':
+    if path[0] == '/':
         path = path[1:]
+    if path[:4] == 'root':
+        path = path[4:]
+        if path and path[0] == '/':
+            path = path[1:]
+    
     return ''.join(['namenode/root/', path])
 
 
@@ -94,6 +97,8 @@ def ls(path: str):
     keys = json.loads(r.get(f'{FB_BASE_URL}{path}.json').text)
     if keys == 0:
         return ''
+    elif not keys:
+        return 'NO SUCH DIRECTORY'
     return '\n'.join([k.replace('-', '.') for k in keys])
 
 

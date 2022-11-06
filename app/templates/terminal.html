@@ -1,6 +1,8 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 <script>
+    var imp = "Unset"
+
     function update_sel_buttons(selected) {
         if (selected === "firebase") {
             document.getElementById('fb_sel').textContent = "Selected"
@@ -12,6 +14,9 @@
             document.getElementById('sql_sel').textContent = "Select"
             document.getElementById('sql_sel').classList.remove('btn-warning')
             document.getElementById('sql_sel').classList.add('btn-light')
+            imp = "firebase"
+            res = "<a>************</br>* FIREBASE *</br>************</a></br>"
+            document.getElementById('term_history').innerHTML += res
         } else if (selected === "mongo") {
             document.getElementById('mongo_sel').textContent = "Selected"
             document.getElementById('mongo_sel').classList.add('btn-warning')
@@ -22,6 +27,9 @@
             document.getElementById('sql_sel').textContent = "Select"
             document.getElementById('sql_sel').classList.remove('btn-warning')
             document.getElementById('sql_sel').classList.add('btn-light')
+            imp = "mongo"
+            res = "<a>***********</br>* MONGODB *</br>***********</a></br>"
+            document.getElementById('term_history').innerHTML += res
         } else if (selected === "mysql") {
             document.getElementById('sql_sel').textContent = "Selected"
             document.getElementById('sql_sel').classList.add('btn-warning')
@@ -32,6 +40,9 @@
             document.getElementById('fb_sel').textContent = "Select"
             document.getElementById('fb_sel').classList.remove('btn-warning')
             document.getElementById('fb_sel').classList.add('btn-light')
+            imp = "mysql"
+            res = "<a>*********</br>* MYSQL *</br>*********</a></br>"
+            document.getElementById('term_history').innerHTML += res
         }
     }
 
@@ -40,7 +51,7 @@
             method: 'POST',
             url: '/command',
             dataType: "json",
-            data: {'imp': '{{imp}}', 'comm': input},
+            data: {'imp': imp, 'comm': input},
             async: false
         });
         return jsonCall.responseText
@@ -74,7 +85,7 @@
             <div class="card bg-danger text-white mb-4" style="margin: 0">
                 <div class="card-body">Firebase</div>
                 <div class="card-footer d-flex align-items-center justify-content-between" >
-                    <a id="fb_sel" class="btn {{'btn-warning' if term_sel[0] == 'Selected' else 'btn-light'}}" href="firebase_term">{{term_sel[0]}}</a>
+                    <a id="fb_sel" class="btn btn-light" onclick="update_sel_buttons('firebase')">Select</a>
                 </div>
             </div>
         </div>
@@ -82,7 +93,7 @@
             <div class="card bg-success text-white mb-4" style="margin: 0">
                 <div class="card-body">MongoDB</div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a id="mongo_sel" class="btn {{'btn-warning' if term_sel[1] == 'Selected' else 'btn-light'}}" href="mongo_term">{{term_sel[1]}}</a>
+                    <a id="mongo_sel" class="btn btn-light" onclick="update_sel_buttons('mongo')">Select</a>
                 </div>
             </div>
         </div>
@@ -90,7 +101,7 @@
             <div class="card bg-primary text-white mb-4" style="margin: 0">
                 <div class="card-body">MySQL</div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a id="sql_sel" class="btn {{'btn-warning' if term_sel[2] == 'Selected' else 'btn-light'}}" href="mysql_term">{{term_sel[2]}}</a>
+                    <a id="sql_sel" class="btn btn-light" onclick="update_sel_buttons('mysql')">Select</a>
                 </div>
             </div>
         </div>
@@ -100,7 +111,7 @@
             <i class="fas fa-table me-1"></i>
             Terminal   
         </div>
-        <div id="term_history" class="card-body">
+        <div id="term_history" class="card-body" style="font-family: 'Courier New', monospace;">
         </div>
     </div>
     <div class="input-group mb-3">
