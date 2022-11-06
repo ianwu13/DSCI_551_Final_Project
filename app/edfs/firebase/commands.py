@@ -31,7 +31,7 @@ def preprocess_path(path: str):
         path = path[1:]
     if path[:4] == 'root':
         path = path[4:]
-        if path and path[0] == '/':
+        if path != '' and path[0] == '/':
             path = path[1:]
     
     return ''.join(['namenode/root/', path])

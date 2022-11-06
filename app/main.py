@@ -18,6 +18,14 @@ else:
 def home():
     return render_template('index.html', content=render_template('terminal.html'))
 
+@app.route(f'/terminal')
+def term():
+    return render_template('index.html', content=render_template('terminal.html'))
+
+@app.route(f'/file_explorer')
+def file_explorer():
+    return render_template('index.html', content=render_template('file_explorer.html'))
+
 @app.route(f'/example')
 def example():
     return render_template('example.html')
