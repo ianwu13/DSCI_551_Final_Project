@@ -1,0 +1,1 @@
+MySQL and MongoDB must be running before starting site
