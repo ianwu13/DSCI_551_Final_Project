@@ -1,14 +1,14 @@
 def get_implementation():
     print()
-    implementation = input('Enter Integer to Choose Implementation to Test:\n1 - firebase\n2 - mongodb\n3 - mysql\n>>> ')
+    implementation = input('Enter Integer to Choose Implementation to Test:\n1 - firebase\n2 - mongodb\n3 - mysql\n\n>>> ')
     print()
 
     if implementation == '1':
-        import firebase.commands as com
+        import edfs.firebase.commands as com
     elif implementation == '2':
-        import mongodb.commands as com
+        import edfs.mongodb.commands as com
     elif implementation == '3':
-        import mysql.commands as com
+        import edfs.mysql.commands as com
     else:
         print('INVALID INPUT')
         exit()
@@ -71,6 +71,8 @@ def main():
                 continue
             else:
                 print(com.readPartition(split[1], split[2]))
+        elif call == 'test':
+            print(com.tester(split[1], split[2]))
         elif inp.upper() == 'QUIT':
             print('Exiting.')
             break

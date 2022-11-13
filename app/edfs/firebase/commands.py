@@ -27,11 +27,11 @@ def preprocess_path(path: str):
         return 'namenode/root/'
     elif path[-1] == '/':
         path = path[:-1]
-    if path[0] == '/':
+    if path and path[0] == '/':
         path = path[1:]
     if path[:4] == 'root':
         path = path[4:]
-        if path != '' and path[0] == '/':
+        if path and path[0] == '/':
             path = path[1:]
     
     return ''.join(['namenode/root/', path])
@@ -188,11 +188,15 @@ def put(file_path: str, destination_path: str, k: str):
         k = int(k)
     except:
         return 'ARGUMENT FOR K MUST BE INTEGER'
+
     f_name = file_path.split('/')[-1].replace('.', '-')
+    if f_name.split('-')[-1] != 'csv':
+        return 'INVALID FILE TYPE, ONLY CSV IS CURRENTLY SUPPORTED'
+
     if '.' not in destination_path.split('/')[-1]:
         destination_path = f'{preprocess_path(destination_path)}/{f_name}'
     else:
-        if destination_path.split('')[-1] != 'csv':
+        if destination_path.split('.')[-1] != 'csv':
             return 'INVALID FILE TYPE, ONLY CSV IS CURRENTLY SUPPORTED'
         destination_path = preprocess_path(destination_path).replace('.', '-')
 
