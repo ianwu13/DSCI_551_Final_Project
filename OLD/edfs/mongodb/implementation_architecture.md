@@ -1,1 +1,0 @@
-# Describe the architecture here, not necessary but maybe helpful later

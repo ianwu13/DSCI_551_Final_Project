@@ -1,4 +1,3 @@
-
 # Runing the interface webapp
 - MySQL and MongoDB must be running before starting site
   - Start mySQL in system_preferences>mysql>"start mysql" (MAC)
