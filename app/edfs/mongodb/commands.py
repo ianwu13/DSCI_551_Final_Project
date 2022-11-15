@@ -1,9 +1,17 @@
 import pymongo
 from pymongo import MongoClient
 
-client = MongoClient('localhost', 27017)
-db = client['test']
-collection = db['namenode']
+from edfs.creds import MG_CLIENT_ARGS, MG_DB_NAME
+
+
+NUM_DATANODES = 2
+
+client = MongoClient(MG_CLIENT_ARGS[0], MG_CLIENT_ARGS[1])
+db = client[MG_DB_NAME]
+
+namenode_collection = db['namenode']
+datanode_collections = [db[f'datanode_{i+1}'] for i in range(NUM_DATANODES)]
+
 
 def preprocess_path(path: str):
     if path == '.':
@@ -75,8 +83,8 @@ def ls(path: str):
     
     path = preprocess_path(path)
     path_split = [s for s in path.split('/') if s != '']
-    collection = db['namenode']
-    cursor = collection.find({})
+    namenode_collection = db['namenode']
+    cursor = namenode_collection.find({})
     
     for document in cursor:
         exist = True
