@@ -26,6 +26,14 @@ def term():
 def file_explorer():
     return render_template('index.html', content=render_template('file_explorer.html'))
 
+@app.route(f'/pmr')
+def pmr():
+    return render_template('index.html', content=render_template('pmr.html'))
+
+@app.route(f'/spark_pmr')
+def spark_pmr():
+    return render_template('index.html', content=render_template('spark_pmr.html'))
+
 @app.route(f'/example')
 def example():
     return render_template('example.html')

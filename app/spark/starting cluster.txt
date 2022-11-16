@@ -1,0 +1,14 @@
+Tutorial for setting up instances on ec2:
+https://www.tutorialkart.com/apache-spark/how-to-setup-an-apache-spark-cluster/
+
+
+In "sbin" directory of instalation for each node:
+    Start master node:
+    ./start-master.sh
+
+    Start worker nodes:
+    ./start-worker.sh spark://172.31.27.204:7077
+
+update ip in creds when restart ec2 instance as well
+
+go to masternode_ip.8080 in browser to see gui

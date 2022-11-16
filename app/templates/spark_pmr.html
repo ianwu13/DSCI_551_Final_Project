@@ -1,0 +1,138 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+    var imp = "Unset"
+
+    var pwd = "root/"
+
+    var file_pre_1 = '<div style="width: 96px; text-align: center;" onclick="switch_dir(\''
+    var file_pre_2 = '\')"><div style="margin: 0 auto; height: 48px; width: 64px"><svg class="svg-icon" viewBox="0 0 20 20"><path d="M17.064,4.656l-2.05-2.035C14.936,2.544,14.831,2.5,14.721,2.5H3.854c-0.229,0-0.417,0.188-0.417,0.417v14.167c0,0.229,0.188,0.417,0.417,0.417h12.917c0.229,0,0.416-0.188,0.416-0.417V4.952C17.188,4.84,17.144,4.733,17.064,4.656M6.354,3.333h7.917V10H6.354V3.333z M16.354,16.667H4.271V3.333h1.25v7.083c0,0.229,0.188,0.417,0.417,0.417h8.75c0.229,0,0.416-0.188,0.416-0.417V3.886l1.25,1.239V16.667z M13.402,4.688v3.958c0,0.229-0.186,0.417-0.417,0.417c-0.229,0-0.417-0.188-0.417-0.417V4.688c0-0.229,0.188-0.417,0.417-0.417C13.217,4.271,13.402,4.458,13.402,4.688"></path></svg></div>'
+    var file_suf = '</div></br>'
+
+    function update_sel_buttons(selected) {
+        if (selected === "firebase") {
+            document.getElementById('fb_sel').textContent = "Selected"
+            document.getElementById('fb_sel').classList.add('btn-warning')
+            document.getElementById('fb_sel').classList.remove('btn-light')
+            document.getElementById('mongo_sel').textContent = "Select"
+            document.getElementById('mongo_sel').classList.remove('btn-warning')
+            document.getElementById('mongo_sel').classList.add('btn-light')
+            document.getElementById('sql_sel').textContent = "Select"
+            document.getElementById('sql_sel').classList.remove('btn-warning')
+            document.getElementById('sql_sel').classList.add('btn-light')
+            imp = 'firebase'
+        } else if (selected === "mongo") {
+            document.getElementById('mongo_sel').textContent = "Selected"
+            document.getElementById('mongo_sel').classList.add('btn-warning')
+            document.getElementById('mongo_sel').classList.remove('btn-light')
+            document.getElementById('fb_sel').textContent = "Select"
+            document.getElementById('fb_sel').classList.remove('btn-warning')
+            document.getElementById('fb_sel').classList.add('btn-light')
+            document.getElementById('sql_sel').textContent = "Select"
+            document.getElementById('sql_sel').classList.remove('btn-warning')
+            document.getElementById('sql_sel').classList.add('btn-light')
+            imp = 'mongo'
+        } else if (selected === "mysql") {
+            document.getElementById('sql_sel').textContent = "Selected"
+            document.getElementById('sql_sel').classList.add('btn-warning')
+            document.getElementById('sql_sel').classList.remove('btn-light')
+            document.getElementById('mongo_sel').textContent = "Select"
+            document.getElementById('mongo_sel').classList.remove('btn-warning')
+            document.getElementById('mongo_sel').classList.add('btn-light')
+            document.getElementById('fb_sel').textContent = "Select"
+            document.getElementById('fb_sel').classList.remove('btn-warning')
+            document.getElementById('fb_sel').classList.add('btn-light')
+            imp = 'mysql'
+        }
+        dir_render('root/')
+    }
+
+    function make_call(input) {
+        var jsonCall = $.ajax({
+            method: 'POST',
+            url: '/command',
+            dataType: "json",
+            data: {'imp': imp, 'comm': input},
+            async: false
+        });
+        return jsonCall.responseText
+    }
+
+    function dir_render(pth) {
+        tmp = document.getElementById('explorer_bar').innerHTML = 'File Explorer - ' + pwd;
+        if (pth !== 'root/') {
+            // ADD .. PATH
+            document.getElementById('file_display').innerHTML = file_pre_1 + ".." + file_pre_2 + "</br>" + ".." + file_suf
+        } else {
+            document.getElementById('file_display').innerHTML = ""
+        }
+        
+        dir_contents = make_call('ls ' + pwd)
+        if (dir_contents !== "") {
+            split = dir_contents.split('</br>')
+            for (let i = 0; i < split.length; i++) {
+                document.getElementById('file_display').innerHTML += file_pre_1 + split[i] + file_pre_2 + "</br>" + split[i] + file_suf
+            }
+        }
+    }
+
+    function switch_dir(new_dir) {
+        if (new_dir.includes(".csv")) {
+            return
+        }
+        if (new_dir === "..") {
+            pwd = pwd.substring(0, pwd.substring(0, pwd.lastIndexOf('/')).lastIndexOf('/')) + "/";
+        } else {
+            pwd += new_dir + "/"
+        }
+        dir_render(pwd)
+    }
+
+</script>
+
+<div class="container-fluid px-4">
+    <div class="row" style="padding-top: 16px">
+        <div class="col-xl-3 col-md-6">
+            <h1 class="mt-1" styl>Spark-Based PMR</h1>
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item active">Select an implementation to begin</li>
+            </ol>
+        </div>
+        <div class="col-xl-3 col-md-6" style="margin: auto 0">
+            <div class="card bg-danger text-white mb-4" style="margin: 0">
+                <div class="card-body">Firebase</div>
+                <div class="card-footer d-flex align-items-center justify-content-between" >
+                    <a id="fb_sel" class="btn btn-light" onclick="update_sel_buttons('firebase')">Select</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6" style="margin: auto 0">
+            <div class="card bg-success text-white mb-4" style="margin: 0">
+                <div class="card-body">MongoDB</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a id="mongo_sel" class="btn btn-light" onclick="update_sel_buttons('mongo')">Select</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6" style="margin: auto 0">
+            <div class="card bg-primary text-white mb-4" style="margin: 0">
+                <div class="card-body">MySQL</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a id="sql_sel" class="btn btn-light" onclick="update_sel_buttons('mysql')">Select</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--SPARK BASED PMR STUFF-->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-book-open me-1"></i>
+            <a id="explorer_bar">File Explorer</a>   
+        </div>
+        <div id="file_display" class="card-body" style="font-family: 'Courier New', monospace;">
+            SELECT ALL, AVERAGE, MAX, MIN, CHANGE
+            FOR RANGE
+            IN {FILE NAME}
+        </div>
+    </div>
+</div>
