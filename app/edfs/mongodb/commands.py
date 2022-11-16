@@ -89,8 +89,31 @@ def ls(path: str):
 
 
 def cat(path: str): 
+    
     # display content of a file, e.g., cat /user/john/hello.txt
-    pass
+    if '.' not in path.split('/')[-1]:
+        return 'PATH MUST BE A FILE'
+    
+    path = preprocess_path(path.replace('.', '-'))
+    path_split = [s for s in path.split('/') if s != '']
+    check_path = '.'.join(path_split[1:len(path_split)])
+    
+    if list(db.namenode.find({check_path:{'$exists': True}}, {'_id': 0, check_path: 1})) == []:
+        return 'FILE NOT FOUND'
+    else:
+        original_dict = list(db.namenode.find({check_path:{'$exists': True}}, {'_id': 0, check_path: 1}))[0]
+        temp_dict = original_dict
+        for s in path_split[1:]:
+            temp_dict = temp_dict[s]
+
+        df_list = []
+        for key in temp_dict.keys():
+            datanode, partition = temp_dict[key].split('-')
+            data = list(db[datanode].find({partition: {'$exists': True}}, {'_id': 0}))[0][partition]
+            df_ = pd.DataFrame.from_records(data)
+            df_list.append(df_)
+        df = pd.concat(df_list, ignore_index=True)
+    return df
 
 
 def rm(path: str):
