@@ -1,0 +1,910 @@
+{
+  "bytes": 256659,
+  "datahub": {
+    "created": "2017-11-09T00:53:58.078951",
+    "findability": "published",
+    "flowid": "core/co2-ppm/10",
+    "modified": "2018-11-01T20:08:14.298148",
+    "owner": "core",
+    "ownerid": "core"
+  },
+  "description": "Data are sourced from the US Government's Earth System Research Laboratory, Global Monitoring Division. Two main series are provided: the Mauna Loa series (which has the longest continuous series since 1958) and a Global Average series (a global average over marine surface sites).",
+  "hash": "5b193ca53e5f2ae4a6a2902b630ef00b",
+  "homepage": "http://www.esrl.noaa.gov/gmd/ccgg/trends",
+  "id": "core/co2-ppm",
+  "licenses": [
+    {
+      "name": "ODC-PDDL-1.0",
+      "path": "http://opendatacommons.org/licenses/pddl/",
+      "title": "Open Data Commons Public Domain Dedication and License v1.0"
+    }
+  ],
+  "name": "co2-ppm",
+  "resources": [
+    {
+      "bytes": 29864,
+      "datahub": {
+        "type": "original"
+      },
+      "dpp:streamedFrom": "https://s3.amazonaws.com/rawstore.datahub.io/8caf50a94455f329a5d258cd2b6f5f03.csv",
+      "encoding": "ISO-8859-1",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "name": "co2-mm-mlo_original",
+      "path": "archive/co2-mm-mlo.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "schema": {
+        "fields": [
+          {
+            "description": "YYYY-MM-DD",
+            "format": "any",
+            "name": "Date",
+            "type": "date"
+          },
+          {
+            "description": "",
+            "name": "Decimal Date",
+            "type": "number"
+          },
+          {
+            "description": "The monthly mean CO2 mole fraction determined from daily averages. If there are missing days concentrated either early or late in the month, the monthly mean is corrected to the middle of the month using the average seasonal cycle. Missing months are denoted by -99.99.",
+            "name": "Average",
+            "type": "number"
+          },
+          {
+            "description": "Values from the average column and interpolated values where data are missing. Interpolated values are computed in two steps. First, we compute for each month the average seasonal cycle in a 7-year window around each monthly value. In this way the seasonal cycle is allowed to change slowly over time. We then determine the trend value for each month by removing the seasonal cycle; this result is shown in the trend column. Trend values are linearly interpolated for missing months. The interpolated monthly mean is then the sum of the average seasonal cycle value and the trend value for the missing month.",
+            "name": "Interpolated",
+            "type": "number"
+          },
+          {
+            "description": "Seasonally corrected.",
+            "name": "Trend",
+            "type": "number"
+          },
+          {
+            "description": "-1 denotes no data for number of daily averages in the month.",
+            "name": "Number of Days",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "bytes": 1025,
+      "datahub": {
+        "type": "original"
+      },
+      "dpp:streamedFrom": "https://s3.amazonaws.com/rawstore.datahub.io/0b618d8b29775ea68c1a424f24f5dd88.csv",
+      "encoding": "ISO-8859-2",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "name": "co2-annmean-mlo_original",
+      "path": "archive/co2-annmean-mlo.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "any",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "description": "",
+            "name": "Mean",
+            "type": "number"
+          },
+          {
+            "description": "The estimated uncertainty in the annual mean is the standard deviation of the differences of annual mean values determined independently by NOAA/ESRL and the Scripps Institution of Oceanography.",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "bytes": 918,
+      "datahub": {
+        "type": "original"
+      },
+      "dpp:streamedFrom": "https://s3.amazonaws.com/rawstore.datahub.io/6faf34070c171575a4cb72ce0b56c17b.csv",
+      "encoding": "ISO-8859-1",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "name": "co2-gr-mlo_original",
+      "path": "archive/co2-gr-mlo.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "any",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "description": "Annual CO2 mole fraction increase (ppm) from Jan 1 through Dec 31.",
+            "name": "Annual Increase",
+            "type": "number"
+          },
+          {
+            "description": "Estimated from the standard deviation of the differences between monthly mean values determined independently by the Scripps Institution of Oceanography and by NOAA/ESRL.",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "bytes": 14385,
+      "datahub": {
+        "type": "original"
+      },
+      "dpp:streamedFrom": "https://s3.amazonaws.com/rawstore.datahub.io/5fa2d3229917fad2b943705cee6f09eb.csv",
+      "encoding": "ISO-8859-2",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "name": "co2-mm-gl_original",
+      "path": "archive/co2-mm-gl.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "schema": {
+        "fields": [
+          {
+            "description": "YYYY-MM-DD",
+            "format": "any",
+            "name": "Date",
+            "type": "date"
+          },
+          {
+            "description": "",
+            "name": "Decimal Date",
+            "type": "number"
+          },
+          {
+            "description": "",
+            "name": "Average",
+            "type": "number"
+          },
+          {
+            "description": "",
+            "name": "Trend",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "bytes": 668,
+      "datahub": {
+        "type": "original"
+      },
+      "dpp:streamedFrom": "https://s3.amazonaws.com/rawstore.datahub.io/cf3ab8d8771c2bfea077adaa9a853395.csv",
+      "encoding": "ISO-8859-2",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "name": "co2-annmean-gl_original",
+      "path": "archive/co2-annmean-gl.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "any",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "description": "",
+            "name": "Mean",
+            "type": "number"
+          },
+          {
+            "description": "The uncertainty in the global annual mean is estimated using a monte carlo technique that computes 100 global annual averages, each time using a slightly different set of measurement records from the NOAA ESRL cooperative air sampling network.  The reported uncertainty is the mean of the standard deviations for each annual average using this technique. Please see Conway et al., 1994, JGR, vol. 99, no. D11. for a complete discussion.",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "bytes": 918,
+      "datahub": {
+        "type": "original"
+      },
+      "dpp:streamedFrom": "https://s3.amazonaws.com/rawstore.datahub.io/aff4f775ed0d71fa76b2ec75d8ca7db9.csv",
+      "encoding": "ISO-8859-1",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "name": "co2-gr-gl_original",
+      "path": "archive/co2-gr-gl.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "any",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "description": "Annual CO2 mole fraction increase (ppm) from Jan 1 through Dec 31.",
+            "name": "Annual Increase",
+            "type": "number"
+          },
+          {
+            "description": "The uncertainty in the global annual mean growth rate is estimated using a monte carlo technique that computes 100 time series of global annual growth rates, each time using measurement records from a different sampling of sites from the NOAA ESRL cooperative air sampling network. Each year has a different uncertainty. Please see Conway et al., 1994, JGR, vol. 99, no. D11. for a complete discussion. The last one or two years listed could have preliminary uncertainties set equal to the average uncertainty since 1980. Before 1980 the global growth rate has been approximated by taking the average of Mauna Loa and the South Pole, correcting for the offset between (MLO+SPO)/2 and the global Marine Boundary Layer, as described in Ballantyne et al, 2012.",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "bytes": 2778,
+      "datahub": {
+        "type": "derived/report"
+      },
+      "description": "Validation report for tabular data",
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/validation_report/data/ebd1771fb7765c2fd27ae183f2c6b149/validation_report.json",
+      "format": "json",
+      "hash": "ebd1771fb7765c2fd27ae183f2c6b149",
+      "name": "validation_report",
+      "path": "data/validation_report.json",
+      "profile": "data-resource"
+    },
+    {
+      "bytes": 32773,
+      "datahub": {
+        "derivedFrom": [
+          "co2-mm-mlo"
+        ],
+        "type": "derived/csv"
+      },
+      "dialect": {
+        "delimiter": ",",
+        "doubleQuote": true,
+        "lineTerminator": "\r\n",
+        "quoteChar": "\"",
+        "skipInitialSpace": false
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-mm-mlo_csv/data/5d0e2bc9cc70b8dd8590a31d7ab4526b/co2-mm-mlo_csv.csv",
+      "encoding": "utf-8",
+      "format": "csv",
+      "hash": "5d0e2bc9cc70b8dd8590a31d7ab4526b",
+      "mediatype": "text/csv",
+      "name": "co2-mm-mlo_csv",
+      "path": "data/co2-mm-mlo_csv.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 727,
+      "schema": {
+        "fields": [
+          {
+            "description": "YYYY-MM-DD",
+            "format": "%Y-%m-%d",
+            "name": "Date",
+            "type": "date"
+          },
+          {
+            "decimalChar": ".",
+            "description": "",
+            "groupChar": "",
+            "name": "Decimal Date",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "The monthly mean CO2 mole fraction determined from daily averages. If there are missing days concentrated either early or late in the month, the monthly mean is corrected to the middle of the month using the average seasonal cycle. Missing months are denoted by -99.99.",
+            "groupChar": "",
+            "name": "Average",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "Values from the average column and interpolated values where data are missing. Interpolated values are computed in two steps. First, we compute for each month the average seasonal cycle in a 7-year window around each monthly value. In this way the seasonal cycle is allowed to change slowly over time. We then determine the trend value for each month by removing the seasonal cycle; this result is shown in the trend column. Trend values are linearly interpolated for missing months. The interpolated monthly mean is then the sum of the average seasonal cycle value and the trend value for the missing month.",
+            "groupChar": "",
+            "name": "Interpolated",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "Seasonally corrected.",
+            "groupChar": "",
+            "name": "Trend",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "-1 denotes no data for number of daily averages in the month.",
+            "groupChar": "",
+            "name": "Number of Days",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 1439,
+      "datahub": {
+        "derivedFrom": [
+          "co2-annmean-mlo"
+        ],
+        "type": "derived/csv"
+      },
+      "dialect": {
+        "delimiter": ",",
+        "doubleQuote": true,
+        "lineTerminator": "\r\n",
+        "quoteChar": "\"",
+        "skipInitialSpace": false
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-annmean-mlo_csv/data/1845805520d63b57a5a75dc2b52adb77/co2-annmean-mlo_csv.csv",
+      "encoding": "utf-8",
+      "format": "csv",
+      "hash": "1845805520d63b57a5a75dc2b52adb77",
+      "mediatype": "text/csv",
+      "name": "co2-annmean-mlo_csv",
+      "path": "data/co2-annmean-mlo_csv.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 59,
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "%Y-%m-%d",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "decimalChar": ".",
+            "description": "",
+            "groupChar": "",
+            "name": "Mean",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "The estimated uncertainty in the annual mean is the standard deviation of the differences of annual mean values determined independently by NOAA/ESRL and the Scripps Institution of Oceanography.",
+            "groupChar": "",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 1332,
+      "datahub": {
+        "derivedFrom": [
+          "co2-gr-mlo"
+        ],
+        "type": "derived/csv"
+      },
+      "dialect": {
+        "delimiter": ",",
+        "doubleQuote": true,
+        "lineTerminator": "\r\n",
+        "quoteChar": "\"",
+        "skipInitialSpace": false
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-gr-mlo_csv/data/dca678efb15795407cfa728fde8e86fd/co2-gr-mlo_csv.csv",
+      "encoding": "utf-8",
+      "format": "csv",
+      "hash": "dca678efb15795407cfa728fde8e86fd",
+      "mediatype": "text/csv",
+      "name": "co2-gr-mlo_csv",
+      "path": "data/co2-gr-mlo_csv.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 59,
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "%Y-%m-%d",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "decimalChar": ".",
+            "description": "Annual CO2 mole fraction increase (ppm) from Jan 1 through Dec 31.",
+            "groupChar": "",
+            "name": "Annual Increase",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "Estimated from the standard deviation of the differences between monthly mean values determined independently by the Scripps Institution of Oceanography and by NOAA/ESRL.",
+            "groupChar": "",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 16238,
+      "datahub": {
+        "derivedFrom": [
+          "co2-mm-gl"
+        ],
+        "type": "derived/csv"
+      },
+      "dialect": {
+        "delimiter": ",",
+        "doubleQuote": true,
+        "lineTerminator": "\r\n",
+        "quoteChar": "\"",
+        "skipInitialSpace": false
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-mm-gl_csv/data/156e6bb50c28ada29d3e4ba667baf805/co2-mm-gl_csv.csv",
+      "encoding": "utf-8",
+      "format": "csv",
+      "hash": "156e6bb50c28ada29d3e4ba667baf805",
+      "mediatype": "text/csv",
+      "name": "co2-mm-gl_csv",
+      "path": "data/co2-mm-gl_csv.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 463,
+      "schema": {
+        "fields": [
+          {
+            "description": "YYYY-MM-DD",
+            "format": "%Y-%m-%d",
+            "name": "Date",
+            "type": "date"
+          },
+          {
+            "decimalChar": ".",
+            "description": "",
+            "groupChar": "",
+            "name": "Decimal Date",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "",
+            "groupChar": "",
+            "name": "Average",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "",
+            "groupChar": "",
+            "name": "Trend",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 935,
+      "datahub": {
+        "derivedFrom": [
+          "co2-annmean-gl"
+        ],
+        "type": "derived/csv"
+      },
+      "dialect": {
+        "delimiter": ",",
+        "doubleQuote": true,
+        "lineTerminator": "\r\n",
+        "quoteChar": "\"",
+        "skipInitialSpace": false
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-annmean-gl_csv/data/cc329a63a7c075e419d22faaf560bc3e/co2-annmean-gl_csv.csv",
+      "encoding": "utf-8",
+      "format": "csv",
+      "hash": "cc329a63a7c075e419d22faaf560bc3e",
+      "mediatype": "text/csv",
+      "name": "co2-annmean-gl_csv",
+      "path": "data/co2-annmean-gl_csv.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 38,
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "%Y-%m-%d",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "decimalChar": ".",
+            "description": "",
+            "groupChar": "",
+            "name": "Mean",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "The uncertainty in the global annual mean is estimated using a monte carlo technique that computes 100 global annual averages, each time using a slightly different set of measurement records from the NOAA ESRL cooperative air sampling network.  The reported uncertainty is the mean of the standard deviations for each annual average using this technique. Please see Conway et al., 1994, JGR, vol. 99, no. D11. for a complete discussion.",
+            "groupChar": "",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 1332,
+      "datahub": {
+        "derivedFrom": [
+          "co2-gr-gl"
+        ],
+        "type": "derived/csv"
+      },
+      "dialect": {
+        "delimiter": ",",
+        "doubleQuote": true,
+        "lineTerminator": "\r\n",
+        "quoteChar": "\"",
+        "skipInitialSpace": false
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-gr-gl_csv/data/0c069cb8f163d0e4f0b4af0357de555e/co2-gr-gl_csv.csv",
+      "encoding": "utf-8",
+      "format": "csv",
+      "hash": "0c069cb8f163d0e4f0b4af0357de555e",
+      "mediatype": "text/csv",
+      "name": "co2-gr-gl_csv",
+      "path": "data/co2-gr-gl_csv.csv",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 59,
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "%Y-%m-%d",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "decimalChar": ".",
+            "description": "Annual CO2 mole fraction increase (ppm) from Jan 1 through Dec 31.",
+            "groupChar": "",
+            "name": "Annual Increase",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "The uncertainty in the global annual mean growth rate is estimated using a monte carlo technique that computes 100 time series of global annual growth rates, each time using measurement records from a different sampling of sites from the NOAA ESRL cooperative air sampling network. Each year has a different uncertainty. Please see Conway et al., 1994, JGR, vol. 99, no. D11. for a complete discussion. The last one or two years listed could have preliminary uncertainties set equal to the average uncertainty since 1980. Before 1980 the global growth rate has been approximated by taking the average of Mauna Loa and the South Pole, correcting for the offset between (MLO+SPO)/2 and the global Marine Boundary Layer, as described in Ballantyne et al, 2012.",
+            "groupChar": "",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 96477,
+      "datahub": {
+        "derivedFrom": [
+          "co2-mm-mlo"
+        ],
+        "type": "derived/json"
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-mm-mlo_json/data/aed7eb0d19cbcd90790525d40728b0a8/co2-mm-mlo_json.json",
+      "encoding": "utf-8",
+      "format": "json",
+      "hash": "aed7eb0d19cbcd90790525d40728b0a8",
+      "mediatype": "text/csv",
+      "name": "co2-mm-mlo_json",
+      "path": "data/co2-mm-mlo_json.json",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 727,
+      "schema": {
+        "fields": [
+          {
+            "description": "YYYY-MM-DD",
+            "format": "%Y-%m-%d",
+            "name": "Date",
+            "type": "date"
+          },
+          {
+            "description": "",
+            "name": "Decimal Date",
+            "type": "number"
+          },
+          {
+            "description": "The monthly mean CO2 mole fraction determined from daily averages. If there are missing days concentrated either early or late in the month, the monthly mean is corrected to the middle of the month using the average seasonal cycle. Missing months are denoted by -99.99.",
+            "name": "Average",
+            "type": "number"
+          },
+          {
+            "description": "Values from the average column and interpolated values where data are missing. Interpolated values are computed in two steps. First, we compute for each month the average seasonal cycle in a 7-year window around each monthly value. In this way the seasonal cycle is allowed to change slowly over time. We then determine the trend value for each month by removing the seasonal cycle; this result is shown in the trend column. Trend values are linearly interpolated for missing months. The interpolated monthly mean is then the sum of the average seasonal cycle value and the trend value for the missing month.",
+            "name": "Interpolated",
+            "type": "number"
+          },
+          {
+            "description": "Seasonally corrected.",
+            "name": "Trend",
+            "type": "number"
+          },
+          {
+            "description": "-1 denotes no data for number of daily averages in the month.",
+            "name": "Number of Days",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 3533,
+      "datahub": {
+        "derivedFrom": [
+          "co2-annmean-mlo"
+        ],
+        "type": "derived/json"
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-annmean-mlo_json/data/5168771a128447a2d4c8a77e40844134/co2-annmean-mlo_json.json",
+      "encoding": "utf-8",
+      "format": "json",
+      "hash": "5168771a128447a2d4c8a77e40844134",
+      "mediatype": "text/csv",
+      "name": "co2-annmean-mlo_json",
+      "path": "data/co2-annmean-mlo_json.json",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 59,
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "%Y-%m-%d",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "description": "",
+            "name": "Mean",
+            "type": "number"
+          },
+          {
+            "description": "The estimated uncertainty in the annual mean is the standard deviation of the differences of annual mean values determined independently by NOAA/ESRL and the Scripps Institution of Oceanography.",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 4065,
+      "datahub": {
+        "derivedFrom": [
+          "co2-gr-mlo"
+        ],
+        "type": "derived/json"
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-gr-mlo_json/data/f44c8eb4ca40b2f72fe9fc6c95975616/co2-gr-mlo_json.json",
+      "encoding": "utf-8",
+      "format": "json",
+      "hash": "f44c8eb4ca40b2f72fe9fc6c95975616",
+      "mediatype": "text/csv",
+      "name": "co2-gr-mlo_json",
+      "path": "data/co2-gr-mlo_json.json",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 59,
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "%Y-%m-%d",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "description": "Annual CO2 mole fraction increase (ppm) from Jan 1 through Dec 31.",
+            "name": "Annual Increase",
+            "type": "number"
+          },
+          {
+            "description": "Estimated from the standard deviation of the differences between monthly mean values determined independently by the Scripps Institution of Oceanography and by NOAA/ESRL.",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 39270,
+      "datahub": {
+        "derivedFrom": [
+          "co2-mm-gl"
+        ],
+        "type": "derived/json"
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-mm-gl_json/data/570831301a2615b72c07bef36d6fcae3/co2-mm-gl_json.json",
+      "encoding": "utf-8",
+      "format": "json",
+      "hash": "570831301a2615b72c07bef36d6fcae3",
+      "mediatype": "text/csv",
+      "name": "co2-mm-gl_json",
+      "path": "data/co2-mm-gl_json.json",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 463,
+      "schema": {
+        "fields": [
+          {
+            "description": "YYYY-MM-DD",
+            "format": "%Y-%m-%d",
+            "name": "Date",
+            "type": "date"
+          },
+          {
+            "description": "",
+            "name": "Decimal Date",
+            "type": "number"
+          },
+          {
+            "description": "",
+            "name": "Average",
+            "type": "number"
+          },
+          {
+            "description": "",
+            "name": "Trend",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 2238,
+      "datahub": {
+        "derivedFrom": [
+          "co2-annmean-gl"
+        ],
+        "type": "derived/json"
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-annmean-gl_json/data/c1200ca90609826e091db094f308cae7/co2-annmean-gl_json.json",
+      "encoding": "utf-8",
+      "format": "json",
+      "hash": "c1200ca90609826e091db094f308cae7",
+      "mediatype": "text/csv",
+      "name": "co2-annmean-gl_json",
+      "path": "data/co2-annmean-gl_json.json",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 38,
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "%Y-%m-%d",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "description": "",
+            "name": "Mean",
+            "type": "number"
+          },
+          {
+            "description": "The uncertainty in the global annual mean is estimated using a monte carlo technique that computes 100 global annual averages, each time using a slightly different set of measurement records from the NOAA ESRL cooperative air sampling network.  The reported uncertainty is the mean of the standard deviations for each annual average using this technique. Please see Conway et al., 1994, JGR, vol. 99, no. D11. for a complete discussion.",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 4062,
+      "datahub": {
+        "derivedFrom": [
+          "co2-gr-gl"
+        ],
+        "type": "derived/json"
+      },
+      "dpp:streamedFrom": "/tmp/tmpuaa_qbk_/core/co2-ppm/co2-gr-gl_json/data/217ab4f9ffcf98d79af9e41e1e4148b2/co2-gr-gl_json.json",
+      "encoding": "utf-8",
+      "format": "json",
+      "hash": "217ab4f9ffcf98d79af9e41e1e4148b2",
+      "mediatype": "text/csv",
+      "name": "co2-gr-gl_json",
+      "path": "data/co2-gr-gl_json.json",
+      "pathType": "local",
+      "profile": "data-resource",
+      "rowcount": 59,
+      "schema": {
+        "fields": [
+          {
+            "description": "",
+            "format": "%Y-%m-%d",
+            "name": "Year",
+            "type": "date"
+          },
+          {
+            "description": "Annual CO2 mole fraction increase (ppm) from Jan 1 through Dec 31.",
+            "name": "Annual Increase",
+            "type": "number"
+          },
+          {
+            "description": "The uncertainty in the global annual mean growth rate is estimated using a monte carlo technique that computes 100 time series of global annual growth rates, each time using measurement records from a different sampling of sites from the NOAA ESRL cooperative air sampling network. Each year has a different uncertainty. Please see Conway et al., 1994, JGR, vol. 99, no. D11. for a complete discussion. The last one or two years listed could have preliminary uncertainties set equal to the average uncertainty since 1980. Before 1980 the global growth rate has been approximated by taking the average of Mauna Loa and the South Pole, correcting for the offset between (MLO+SPO)/2 and the global Marine Boundary Layer, as described in Ballantyne et al, 2012.",
+            "name": "Uncertainty",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 2409,
+      "dpp:streamedFrom": "/tmp/tmpqir5w9_e/README.md",
+      "format": "md",
+      "name": "readme",
+      "path": "README.md"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Trends in Atmospheric Carbon Dioxide, Mauna Loa, Hawaii",
+      "path": "http://www.esrl.noaa.gov/gmd/ccgg/trends/index.html",
+      "title": "Trends in Atmospheric Carbon Dioxide, Mauna Loa, Hawaii"
+    },
+    {
+      "name": "Trends in Atmospheric Carbon Dioxide, Global",
+      "path": "http://www.esrl.noaa.gov/gmd/ccgg/trends/global.html",
+      "title": "Trends in Atmospheric Carbon Dioxide, Global"
+    }
+  ],
+  "title": "CO2 PPM - Trends in Atmospheric Carbon Dioxide",
+  "version": "0.1.0",
+  "views": [
+    {
+      "name": "graph",
+      "resources": [
+        "co2-mm-mlo"
+      ],
+      "spec": {
+        "group": "Date",
+        "series": [
+          "Interpolated",
+          "Trend"
+        ],
+        "type": "lines-and-points"
+      },
+      "specType": "simple",
+      "title": "Trends in Atmospheric Carbon Dioxide"
+    },
+    {
+      "name": "growth-rate",
+      "resources": [
+        "co2-gr-mlo"
+      ],
+      "spec": {
+        "group": "Year",
+        "series": [
+          "Annual Increase"
+        ],
+        "type": "bar"
+      },
+      "specType": "simple",
+      "title": "Growth rate of Carbon Dioxide"
+    }
+  ]
+}

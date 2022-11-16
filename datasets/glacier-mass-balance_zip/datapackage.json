@@ -1,0 +1,182 @@
+{
+  "bytes": 15196,
+  "datahub": {
+    "created": "2017-11-08T21:56:35.633979",
+    "findability": "published",
+    "flowid": "core/glacier-mass-balance/7",
+    "modified": "2018-03-15T06:33:41.098433",
+    "owner": "core",
+    "ownerid": "core"
+  },
+  "description": "This is cumulative change in mass balance of a set of reference glaciers worldwide beginning in 1945. The values represents the average of all the glaciers that were measured. Negative values indicate a net loss of ice and snow compared with the base year of 1945. For consistency, measurements are in meters of water equivalent, which represent changes in the average thickness of a glacier.",
+  "hash": "4c7840d912ed082142c2ef35c05cccbe",
+  "homepage": "http://www3.epa.gov/climatechange/science/indicators/snow-ice/glaciers.html",
+  "id": "core/glacier-mass-balance",
+  "license": "ODC-PDDL-1.0",
+  "name": "glacier-mass-balance",
+  "resources": [
+    {
+      "bytes": 1123,
+      "datahub": {
+        "type": "original"
+      },
+      "dpp:streamedFrom": "https://s3.amazonaws.com/rawstore.datahub.io/27e05e0885fe41e0d9dfa87e87892458.csv",
+      "encoding": "utf-8",
+      "format": "csv",
+      "mediatype": "text/csv",
+      "name": "glaciers_original",
+      "path": "archive/glaciers.csv",
+      "profile": "data-resource",
+      "schema": {
+        "fields": [
+          {
+            "description": "Year of measurement",
+            "name": "Year",
+            "type": "year"
+          },
+          {
+            "description": "Average mass of measured glacier",
+            "name": "Mean cumulative mass balance",
+            "type": "number"
+          },
+          {
+            "description": "Number of glaciers observed",
+            "name": "Number of observations",
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "bytes": 477,
+      "datahub": {
+        "type": "derived/report"
+      },
+      "description": "Validation report for tabular data",
+      "dpp:streamedFrom": "/tmp/tmp1ps0z2t6/core/glacier-mass-balance/validation_report/data/78004b5e2d9eec94148cecd6b18f0465/validation_report.json",
+      "encoding": "utf-8",
+      "format": "json",
+      "hash": "78004b5e2d9eec94148cecd6b18f0465",
+      "name": "validation_report",
+      "path": "data/validation_report.json",
+      "profile": "data-resource"
+    },
+    {
+      "bytes": 1195,
+      "datahub": {
+        "derivedFrom": [
+          "glaciers"
+        ],
+        "type": "derived/csv"
+      },
+      "dialect": {
+        "delimiter": ",",
+        "doubleQuote": true,
+        "lineTerminator": "\r\n",
+        "quoteChar": "\"",
+        "skipInitialSpace": false
+      },
+      "dpp:streamedFrom": "/tmp/tmp1ps0z2t6/core/glacier-mass-balance/glaciers_csv/data/c04ec0dab848ef8f9b179a2cca11b616/glaciers_csv.csv",
+      "encoding": "utf-8",
+      "format": "csv",
+      "hash": "c04ec0dab848ef8f9b179a2cca11b616",
+      "mediatype": "text/csv",
+      "name": "glaciers_csv",
+      "path": "data/glaciers_csv.csv",
+      "profile": "data-resource",
+      "rowcount": 70,
+      "schema": {
+        "fields": [
+          {
+            "description": "Year of measurement",
+            "name": "Year",
+            "type": "year"
+          },
+          {
+            "decimalChar": ".",
+            "description": "Average mass of measured glacier",
+            "groupChar": "",
+            "name": "Mean cumulative mass balance",
+            "type": "number"
+          },
+          {
+            "decimalChar": ".",
+            "description": "Number of glaciers observed",
+            "groupChar": "",
+            "name": "Number of observations",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 6112,
+      "datahub": {
+        "derivedFrom": [
+          "glaciers"
+        ],
+        "type": "derived/json"
+      },
+      "dpp:streamedFrom": "/tmp/tmp1ps0z2t6/core/glacier-mass-balance/glaciers_json/data/6270342ca6134dadf8f94221be683bc6/glaciers_json.json",
+      "encoding": "utf-8",
+      "format": "json",
+      "hash": "6270342ca6134dadf8f94221be683bc6",
+      "mediatype": "text/csv",
+      "name": "glaciers_json",
+      "path": "data/glaciers_json.json",
+      "profile": "data-resource",
+      "rowcount": 70,
+      "schema": {
+        "fields": [
+          {
+            "description": "Year of measurement",
+            "name": "Year",
+            "type": "year"
+          },
+          {
+            "description": "Average mass of measured glacier",
+            "name": "Mean cumulative mass balance",
+            "type": "number"
+          },
+          {
+            "description": "Number of glaciers observed",
+            "name": "Number of observations",
+            "type": "number"
+          }
+        ]
+      },
+      "signed": true
+    },
+    {
+      "bytes": 6289,
+      "dpp:streamedFrom": "/tmp/tmph14r7j0o/README.md",
+      "format": "md",
+      "name": "readme",
+      "path": "README.md"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Average cumulative mass balance of reference Glaciers worldwide",
+      "title": "Average cumulative mass balance of reference Glaciers worldwide",
+      "web": "http://www3.epa.gov/climatechange/images/indicator_downloads/glaciers_fig-1.csv"
+    }
+  ],
+  "title": "Average cumulative mass balance of reference Glaciers worldwide",
+  "views": [
+    {
+      "name": "graph",
+      "resourceName": "glaciers",
+      "spec": {
+        "group": "Year",
+        "series": [
+          "Mean cumulative mass balance"
+        ],
+        "type": "lines-and-points"
+      },
+      "specType": "simple",
+      "title": "Average mass of measured glacier"
+    }
+  ]
+}
