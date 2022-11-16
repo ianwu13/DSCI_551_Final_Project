@@ -54,26 +54,6 @@ def mkdir(path:str):
 
     return ('Path Created')
 
-'''
-Example:
-
-ls('user/home') --> 
-    tmp = data_from_home_in_fb
-    for f in tmp.keys():
-        print(f)
-
-
-currently in firebase:
-    root: {
-        user: {
-            home: {
-                file1: {}
-                file2: {}
-            }
-        }
-}
-'''
-
 def ls(path: str): 
     
     # listing content of a given directory, e.g., ls /user
@@ -116,17 +96,67 @@ def rm(path: str):
     # remove a file from the file system, e.g., rm /user/john/hello.txt
     pass
 
+def check_exists(dest_path: str):
+    path = preprocess_path(dest_path)
+    path_split = [s for s in path.split('/') if s != '']
+    check_path = '.'.join(path_split[1:len(path_split)])
+    if list(db.namenode.find({check_path: {'$exists': True}})) != []:
+        return True
+    else:
+        return False
 
-def put(file_path: str, destination_path: str, k: int): 
-    '''
-    uploading a file to file system, e.g., put(cars.csv, /user/john, k = # partitions) will
-    upload a file cars.csv to the directory /user/john in EDFS. But note that the file
-    should be stored in k partitions, and the file system should remember where the
-    partitions are stored. You should design a method to partition the data. You may
-    also have the user indicate the method, e.g., hashing on certain car attribute, in the
-    put method. 
-    '''
-    pass
+def put(file_path: str, dest_path: str, k: str): 
+
+    try:
+        k = int(k)
+    except:
+        return 'ARGUMENT FOR K MUST BE INTEGER'
+
+    f_name = file_path.split('/')[-1]
+    if f_name.split('.')[-1] != 'csv':
+        return 'INVALID FILE TYPE, ONLY CSV IS CURRENTLY SUPPORTED'
+
+    if '.' not in dest_path.split('/')[-1]:
+        dest_path = f'{preprocess_path(dest_path)}/{f_name}'
+    else:
+        if dest_path.split('.')[-1] != 'csv':
+            return 'INVALID FILE TYPE, ONLY CSV IS CURRENTLY SUPPORTED'
+
+    # Check if file already exists
+    if check_exists(dest_path):
+        return 'FILE ALREADY EXISTS IN EDFS'
+    else:
+        dest_split = [s.replace('.', '-') for s in dest_path.split('/') if s != '']
+        check_path = '.'.join(dest_split[1:-1])
+        new_path = '.'.join(dest_split[1:])
+        
+        try:
+            df = pd.read_csv(file_path)
+#             df = df.head(15)
+            df.index = pd.RangeIndex(start=1, stop=len(df)+1)
+        except:
+            return 'INVALID FILE PATH'
+
+        if len(df) < k:
+            k = len(df)
+        
+        dn = 1
+        for p in range(k):
+            partition_num = 1
+            records = df.iloc[p::k, :].to_dict(orient='records') # split of data seems not accurate, double check
+            if p%NUM_DATANODES == 0:
+                dn = 1
+                if p != 0:
+                    partition_num += 1
+            else:
+                dn += 1
+            datanode = f'datanode{dn}'
+            db[datanode].insert_many([{f'p{partition_num}': records}])
+            
+            # create records in namenode
+            db.namenode.update_many({check_path: {'$exists': True}}, {'$set': {f'{new_path}.p{p+1}': datanode}})
+
+        return 'FILE UPLOADED SUCCESFULLY'
 
 
 def getPartitionLocations(path: str): 
