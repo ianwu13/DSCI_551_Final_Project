@@ -1,4 +1,5 @@
 import pymongo
+import pandas as pd
 from pymongo import MongoClient
 
 from edfs.creds import MG_CLIENT_ARGS, MG_DB_NAME
@@ -92,9 +93,36 @@ def cat(path: str):
     pass
 
 
-def rm(path: str): 
-    # remove a file from the file system, e.g., rm /user/john/hello.txt
-    pass
+def rm(path: str):
+    
+    path = path.replace('.', '-')
+    path = preprocess_path(path).replace('/', '.')
+    path_split = [s for s in path.split('.') if s != '']
+    check_path = '.'.join(path_split[1:])
+
+    if list(db.namenode.find({check_path:{'$exists': True}})) == []:
+        return 'PATH NOT EXIST'
+
+    # handling file
+    if '-' in path_split[-1]:
+        original_dict = list(db.namenode.find({'root.user.dsci551.project.cars-csv':{'$exists': True}}, 
+                                              {'_id': 0, 'root.user.dsci551.project.cars-csv': 1}))[0]
+        temp_dict = original_dict
+        for s in path_split[1:]:
+            temp_dict = temp_dict[s]
+
+        for key in temp_dict.keys():
+            datanode, partition = temp_dict[key].split('-')
+            obj_ID = list(db[datanode].find({partition: {'$exists': True}}))[0]['_id']
+            db[datanode].delete_one({'_id': obj_ID})
+        message = 'DONE'
+            
+    else:
+        message = 'DONE - NOTE: PARTITIONS FOR SUBFILES NOT DELETED'
+        
+    db.namenode.update_one({check_path:{'$exists': True}},{"$unset":{check_path: 'null'}})
+    
+    return message
 
 def check_exists(dest_path: str):
     path = preprocess_path(dest_path)
@@ -132,7 +160,6 @@ def put(file_path: str, dest_path: str, k: str):
         
         try:
             df = pd.read_csv(file_path)
-#             df = df.head(15)
             df.index = pd.RangeIndex(start=1, stop=len(df)+1)
         except:
             return 'INVALID FILE PATH'
@@ -142,19 +169,21 @@ def put(file_path: str, dest_path: str, k: str):
         
         dn = 1
         for p in range(k):
-            partition_num = 1
+            
             records = df.iloc[p::k, :].to_dict(orient='records') # split of data seems not accurate, double check
+            
             if p%NUM_DATANODES == 0:
                 dn = 1
-                if p != 0:
-                    partition_num += 1
             else:
                 dn += 1
-            datanode = f'datanode{dn}'
-            db[datanode].insert_many([{f'p{partition_num}': records}])
+            
+            datanode = f'datanode{dn}'            
+            partition_num = f'p{len(list(db[datanode].find()))+1}'
+            db[datanode].insert_many([{partition_num: records}])
             
             # create records in namenode
-            db.namenode.update_many({check_path: {'$exists': True}}, {'$set': {f'{new_path}.p{p+1}': datanode}})
+            db.namenode.update_many({check_path: {'$exists': True}}, 
+                                   {'$set': {f'{new_path}.p{p+1}': f'{datanode}-{partition_num}'}})
 
         return 'FILE UPLOADED SUCCESFULLY'
 
