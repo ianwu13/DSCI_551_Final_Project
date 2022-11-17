@@ -44,7 +44,6 @@ def find_year_within_co2_range(file_name:str,lower:int,upper:int):
     for i in parts:
         part = mapPartition(file_name,i)
         part['year'] = [i.split("-")[0] for i in part["Date"]]
-
         part = part[(part['Average'] >= lower) & (part['Average'] <= upper)]
         found = part["year"].to_list()
         results.extend(found)
