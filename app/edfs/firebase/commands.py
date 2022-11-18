@@ -113,7 +113,11 @@ def cat(path: str):
         return 'FILE NOT FOUND'
     data = []
     for p in partitions:
-        data.append(list(json.loads(r.get(f'{FB_BASE_URL}{partitions[p].replace("-", "/")}.json').text).values()))
+        tmp = json.loads(r.get(f'{FB_BASE_URL}{partitions[p].replace("-", "/")}.json').text)
+        if type(tmp) == dict:
+            data.append(list(tmp.values()))
+        elif type(tmp) == list:
+            data.append(list(filter(lambda x: x is not None, tmp)))
 
     output = ', '.join(data[0][0].keys())
     for i in range(len(data[0])):
@@ -258,7 +262,10 @@ def readPartition(path: str, partition: str):
     if not data:
         return 'INVALID PARTITION'
     else:
-        data = list(data.values())
+        if type(data) == dict:
+            data = list(data.values())
+        elif type(data) == list:
+            data = list(filter(lambda x: x is not None, data))
     output = ', '.join(data[0].keys())
     for d in data:
         output = '\n'.join([output, ', '.join([str(v) for v in d.values()])])
