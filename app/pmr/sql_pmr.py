@@ -49,3 +49,50 @@ def find_year_within_co2_range(file_name:str,lower:int,upper:int):
         results.extend(found)
         results = list(set(results))
     return results
+
+
+
+
+
+
+
+# Find the mean of global temperature of all years from two sources 
+def find_mean_temp_each_source(file_name:str,group:str):
+    global_temp_locations = cmd.getPartitionLocations(file_name)
+    parts =[global_temp_locations]
+    parts = parts[0].split("\n")
+    results = []
+    for i in parts:
+        part = mapPartition(file_name,i)
+        part['mean temp'] = part.groupby(group)['Mean'].mean()
+        found = part["mean temp"].to_list()
+        results.extend(found)
+        results = list(set(results))
+    return results
+
+
+
+
+# create a new column to calculate the difference between global temperature by two sources
+def find_difference_two_sources_global_temp(file_name:str):
+
+
+
+# create a new column for finding the absolute change of mean mass balance between every two years
+def find_difference_two_years_glacier_mass(file_name:str):
+
+
+
+# Find years that the number of observation for mass balance of glacier is between certain range
+def find_year_within_co2_range(file_name:str,lower:int,upper:int):
+    glacier_locations = cmd.getPartitionLocations(file_name)
+    parts =[glacier_locations]
+    parts = parts[0].split("\n")
+    results = []
+    for i in parts:
+        part = mapPartition(file_name,i)
+        part = part[(part['Number of observations'] >= lower) & (part['Number of observations'] <= upper)]
+        found = part["Year"].to_list()
+        results.extend(found)
+        results = list(set(results))
+    return results
