@@ -84,7 +84,7 @@ def find_difference_two_years_glacier_mass(file_name:str):
 
 
 # Find years that the number of observation for mass balance of glacier is between certain range
-def find_year_within_co2_range(file_name:str,lower:int,upper:int):
+def find_year_within_observation_range(file_name:str,lower:int,upper:int):
     glacier_locations = cmd.getPartitionLocations(file_name)
     parts =[glacier_locations]
     parts = parts[0].split("\n")
