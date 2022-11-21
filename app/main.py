@@ -2,9 +2,15 @@
 from flask import Flask, render_template, request
 from utils import *
 
+import pmr.map_reduce as map_reduce
+
+fb_com = None
+mdb_com = None
+sql_com = None
+
 # setup the webserver
 # port may need to be changed if there are multiple flask servers running on same server
-port = 29999
+port = 30000
 base_url = get_base_url(port)
 
 # if the base url is not empty, then the server is running in development, and we need to specify the static folder so that the static files are served
@@ -47,13 +53,26 @@ def example():
 
 @app.route(f'/command', methods=['POST'])
 def command_caller():
+    global fb_com, mdb_com, sql_com
     imp = request.form['imp']
     if imp == 'firebase':
-        import edfs.firebase.commands as com
+        if fb_com:
+            com = fb_com
+        else:
+            import edfs.firebase.commands as com
+            fb_com = com
     elif imp == 'mongo':
-        import edfs.mongodb.commands as com
+        if mdb_com:
+            com = mdb_com
+        else:
+            import edfs.mongodb.commands as com
+            mdb_com = com
     elif imp == 'mysql':
-        import edfs.mysql.commands as com
+        if sql_com:
+            com = sql_com
+        else:
+            import edfs.mysql.commands as com
+            sql_com = com
     else:
         return 'INVALID INPUT' 
      
@@ -97,8 +116,17 @@ def command_caller():
             return com.readPartition(split[1], split[2]).replace('\n', '</br>')
     else:
         return ('Invalid Command.')
-    
-    return 'DONE'
+
+
+@app.route(f'/pmr_sel', methods=['POST'])
+def pmr_sel():
+    funct = request.form['funct']
+    return map_reduce.sel_funct(funct)
+
+
+@app.route(f'/pmr_call', methods=['POST'])
+def pmr_call():
+    return map_reduce.call_funct(request.form)
 
 
 if __name__ == '__main__':
