@@ -50,6 +50,26 @@ def find_year_within_co2_range(file_name:str,lower:int,upper:int):
         results = list(set(results))
     return results
 
+# Analytic function: find_year_within_fossil_range
+# Select year 
+# From fossil_fuel
+# Where total >= lower and total <= upper
+
+# In this case, mapPartiton(p) may take fossil_fuel in partition p, output years with different levels of fossil fuels usage. Reduce function then identifies and returns the years with fossil fuel usage level that fits the specified value range.
+
+# Analytic function: find_sea_level_uncertainty 
+# Select ‘GMSL_uncertainty’
+# From global_mean_sea_level
+# Where month = ‘07’ and year = ‘2020’
+
+# In this case, mapPartiton(p) may take find_sea_level_uncertainty in partition p, output the sea level uncertainty level by month and year. Reduce function extracts month and year information from the ‘Time’ column to create columns ‘month’ and ‘year’, then identifies and returns the uncertainty of sea level that fits the specified month and year values.
+
+# Analytic function: find_year_within_co2_range
+# Select year 
+# From co2_ppm
+# Where average >= lower and average <= upper
+
+# In this case, mapPartiton(p) may take co2_ppm in partition p, output dates with different levels of average co2 emissions. Reduce function extracts the year information from ‘Date’ to create the ‘year’ column, then identifies and returns the years with average co2 emission level that fits the specified value range.
 
 
 
