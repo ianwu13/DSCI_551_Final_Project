@@ -125,3 +125,38 @@ def find_year_within_observation_range(file_name:str,lower:int,upper:int):
         results.extend(found)
         results = list(set(results))
     return results
+
+
+
+# Analytic function: find_mean_temp_each_source
+# Select mean(Mean) AS 'mean temp' 
+# From global_temp
+# GROUP BY Source
+
+# In this case, mapPartiton(p) may take global_temp in partition p, output the mean of temperature of all years by creating a new column.
+# Reduce function then find the corresponding group, in this case source, of the mean temperature.
+
+# Analytic function: find_difference_two_years_glacier_mass 
+# Select ‘Mean Cumulative Mass Balance’
+# From glaciers_csv
+# Where month = ‘07’ and year = ‘2020’
+
+# SELECT  year,'Mean Cumulative Mass Balance',
+# LAG('Mean Cumulative Mass Balance') AS previous_year,
+#'Mean Cumulative Mass Balance' - LAG('Mean Cumulative Mass Balance')
+# OVER (ORDER BY year) AS difference
+# FROM glaciers_csv
+# ORDER BY year
+
+# In this case, mapPartiton(p) takes glaciers_csv in partition p and gives an order number for each row
+# Reduce function returns the mass difference between every two rows to see the size of changes in glacier mass and create a new column for it.
+
+# Analytic function: find_year_within_observation_range
+# Select Year 
+# From glaciers_csv
+# Where 'Number of Observation' >= lower and 'Number of Observation' <= upper
+
+# In this case, mapPartiton(p) takes glacier_csv in partition p, output year with different number of observations. 
+# Reduce function retruns years that falls into the observation range. 
+
+
