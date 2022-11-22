@@ -9,7 +9,6 @@ exp_headers = [
     'SELECT ff.Year, ff.`Gas Fuel`, ff.`Liquid Fuel`, ff.`Solid Fuel`, gt.Mean</br>FROM fossil_fuels.csv ff</br>LEFT JOIN global_temp.csv gt ON ff.Year = gt.Year</br>WHERE gt.Mean >= temp;'
     # co2_glacier_within_year_range
     'SELECT YEAR(co.Date) AS Year, gl.`Mean cumulative mass balance`, co.Average</br>FROM glaciers.csv gl</br>LEFT JOIN co2_ppm.csv co ON gl.Year = co.Year</br>WHERE Year >= start_year AND Year <= end_year;'
-
 ]
 
 exp_bodies = [
@@ -20,11 +19,13 @@ exp_bodies = [
     'In this case, mapPartiton(p) may take glaciers and co2_ppm in partition p, output dates with different levels of average co2 emissions and mean cumulative mass balance of glaciers. Reduce function extracts the year information from ‘Date’ to create the ‘Year’ column, then identifies and returns the average co2 emission level and mean cumulative mass balance of glaciers within a specified year range.',
 ]
 
-funct_forms = [
-    #''.join([line.rstrip('\n') for line in open('pmr/forms/example_form.html', 'r').readlines()]),
-    'Parameters are a lower bound INT value and upper bound INT value for total carbon emission from fossil fuel',
-    'Parameters are an INT value for month and an INT value for year',
-    'Parameters are a lower bound FLOAT value and upper bound FLOAT value for monthly mean CO2',
-    'Parameter is a FLOAT value for average global mean temperature',
-    'Parameters are an INT value for start year and an INT value for end year',
+form_names = [
+    'find_year_within_fossil_range.html' # 'Parameters are a lower bound INT value and upper bound INT value for total carbon emission from fossil fuel',
+    # 'Parameters are an INT value for month and an INT value for year',
+    # 'Parameters are a lower bound FLOAT value and upper bound FLOAT value for monthly mean CO2',
+    # 'Parameter is a FLOAT value for average global mean temperature',
+    # 'Parameters are an INT value for start year and an INT value for end year',
 ]
+
+funct_forms = [''.join([line.rstrip('\n') for line in open(f'pmr/forms/{f}', 'r').readlines()]) for f in form_names]
+
