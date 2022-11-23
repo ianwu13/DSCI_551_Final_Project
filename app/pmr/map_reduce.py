@@ -58,7 +58,7 @@ def sel_funct(funct_id: str):
         explanation_header = funct_data.exp_headers[funct_id]
         explanation_body = funct_data.exp_bodies[funct_id]
         query_form = funct_data.funct_forms[funct_id]
-    except:
+    except Exception as e:
         explanation_header = "BAD_FUNCT_ID"
         explanation_body = 'NO TEMPLATE DATA AVAILABLE'
         query_form = ''
