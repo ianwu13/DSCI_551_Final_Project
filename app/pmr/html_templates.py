@@ -4,7 +4,7 @@ exp_headers = [
     # find_sea_level_uncertainty
     'SELECT `GMSL_uncertainty`</br>FROM global_mean_sea_level.csv</br>WHERE month = month AND year = year;',
     # find_year_within_co2_range
-    'SELECT year</br>FROM co2_ppm.csv</br>WHERE average >= lower AND average <= average;',
+    'SELECT year</br>FROM co2_ppm.csv</br>WHERE average >= lower AND average <= upper;',
     # diff_fuel_within_temp_range
     'SELECT ff.Year, ff.`Gas Fuel`, ff.`Liquid Fuel`, ff.`Solid Fuel`, gt.Mean</br>FROM fossil_fuels.csv ff</br>LEFT JOIN global_temp.csv gt ON ff.Year = gt.Year</br>WHERE gt.Mean >= temp;'
     # co2_glacier_within_year_range
@@ -20,11 +20,11 @@ exp_bodies = [
 ]
 
 form_names = [
-    'find_year_within_fossil_range.html' # 'Parameters are a lower bound INT value and upper bound INT value for total carbon emission from fossil fuel',
-    # 'Parameters are an INT value for month and an INT value for year',
-    # 'Parameters are a lower bound FLOAT value and upper bound FLOAT value for monthly mean CO2',
-    # 'Parameter is a FLOAT value for average global mean temperature',
-    # 'Parameters are an INT value for start year and an INT value for end year',
+    'find_year_within_fossil_range.html', # 'Parameters are a lower bound INT value and upper bound INT value for total carbon emission from fossil fuel',
+    'find_sea_level_uncertainty.html', # 'Parameters are an INT value for month and an INT value for year',
+    'find_year_within_co2_range.html', # 'Parameters are a lower bound FLOAT value and upper bound FLOAT value for monthly mean CO2',
+    'diff_fuel_within_temp_range.html', # 'Parameter is a FLOAT value for average global mean temperature',
+    'co2_glacier_within_year_range.html', # 'Parameters are an INT value for start year and an INT value for end year',
 ]
 
 funct_forms = [''.join([line.rstrip('\n') for line in open(f'pmr/forms/{f}', 'r').readlines()]) for f in form_names]
