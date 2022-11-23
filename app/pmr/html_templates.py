@@ -24,7 +24,7 @@ form_names = [
     'find_sea_level_uncertainty.html', # 'Parameters are an INT value for month and an INT value for year',
     'find_year_within_co2_range.html', # 'Parameters are a lower bound FLOAT value and upper bound FLOAT value for monthly mean CO2',
     'diff_fuel_within_temp_range.html', # 'Parameter is a FLOAT value for average global mean temperature',
-    'co2_glacier_within_year_range.html', # 'Parameters are an INT value for start year and an INT value for end year',
+    'co2_glacier_within_year_range.html' # 'Parameters are an INT value for start year and an INT value for end year'
 ]
 
 funct_forms = [''.join([line.rstrip('\n') for line in open(f'pmr/forms/{f}', 'r').readlines()]) for f in form_names]
