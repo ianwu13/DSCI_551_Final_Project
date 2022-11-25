@@ -1,7 +1,9 @@
 import pmr.html_templates as funct_data
 
 
-def map_fun_0(imp: str, params: list) -> list:
+def map_fun_0(imp: str, params: [lower, upper]) -> list:
+
+    # 'SELECT year FROM fossil_fuels.csv WHERE total >= lower AND total <= upper;'
     if imp == 'firebase':
         import edfs.firebase.commands as com
     elif imp == 'mongo':
@@ -16,19 +18,25 @@ def map_fun_0(imp: str, params: list) -> list:
     partitions = com.getPartitionLocations('/datasets/fossil_fuels.csv').split('\n')
     for p in partitions:
         part_data = com.readPartition('/datasets/fossil_fuels.csv', p)
-        # MAP SPECIFIC PARTITON HERE
 
-        mapped_partition = 'TEMP'
-        output.append(mapped_partition)
+        # MAP SPECIFIC PARTITON HERE
+        names = part_data.split('\n')[0].split(',')
+        names = [x.strip(' ') for x in names]
+        data = [d.split(',') for d in part_data.split('\n')[1:]]
+        data = [[d_.strip(' ') for d_ in d] for d in data]
+        df = pd.DataFrame(data, columns=names)
+        df = df.astype({'Total': 'int64', 'Year': 'int64', 'per capita': 'float64'})
+        part_result = list(c[(c['Total'] >= params[0]) & (c['Total'] <= params[1])].Year.values[:])
+
+        output += part_result 
 
     return output
 
 
 def reduce_fun_0(map_res: list, params: list) -> str:
-    output = 'TEMP'
-    for i in map_res:
-        # REDUCE RESULTS FROM MAP HERE
-        output += i
+    
+    # REDUCE RESULTS FROM MAP HERE
+    output = ' '.join(np.unique(map_res))
 
     return output
 
