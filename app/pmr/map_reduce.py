@@ -1,8 +1,10 @@
+import pandas as pd
+import numpy as np
+
 import pmr.html_templates as funct_data
 
 
-def map_fun_0(imp: str, params: [lower, upper]) -> list:
-
+def map_fun_0(imp: str, params: list) -> list:
     # 'SELECT year FROM fossil_fuels.csv WHERE total >= lower AND total <= upper;'
     if imp == 'firebase':
         import edfs.firebase.commands as com
@@ -25,19 +27,19 @@ def map_fun_0(imp: str, params: [lower, upper]) -> list:
         data = [d.split(',') for d in part_data.split('\n')[1:]]
         data = [[d_.strip(' ') for d_ in d] for d in data]
         df = pd.DataFrame(data, columns=names)
-        df = df.astype({'Total': 'int64', 'Year': 'int64', 'per capita': 'float64'})
-        part_result = list(c[(c['Total'] >= params[0]) & (c['Total'] <= params[1])].Year.values[:])
+        c = df.astype({'Total': int, 'Year': 'int64', 'Per Capita': 'float64'})
+        part_result = c[(c['Total'] >= int(params[0])) & (c['Total'] <= int(params[1]))].Year.to_list()
 
         output.append(part_result)
 
-    return output
+    return [np.array(o, dtype=int).tolist() for o in output]
 
 
 def reduce_fun_0(map_res: list, params: list) -> str:
     
     # REDUCE RESULTS FROM MAP HERE
     flat_list = [item for sublist in map_res for item in sublist]
-    output = ' '.join(np.unique(flat_list))
+    output = ' '.join(np.unique([str(i) for i in flat_list]))
 
     return output
 
@@ -58,7 +60,7 @@ def call_funct(data: dict):
     params = data['params'].split('\n')
 
     map_res, red_res = pmr_wrapper(imp, funct_id, params)
-    return {'map_res': map_res, 'final_res': red_res}
+    return {'map_res': ', '.join([str(i) for i in map_res]), 'final_res': red_res}
 
 
 def sel_funct(funct_id: str):
