@@ -4,8 +4,14 @@ import numpy as np
 import pmr.html_templates as funct_data
 
 
+import pandas as pd
+import numpy as np
+
+import pmr.html_templates as funct_data
+
+
 # 'SELECT YEAR(co.Date) AS Year, gl.`Mean cumulative mass balance`, co.Average</br>FROM glaciers.csv gl
-# LEFT JOIN co2_ppm.csv co ON gl.Year = co.Year</br>WHERE Year >= start_year AND Year <= end_year;',
+# LEFT JOIN co2_ppm.csv co ON gl.Year = co.Year</br>WHERE Year >= start_year AND Year <= end_year;'
 def map_fun_5(imp: str, params: list) -> list:
     # 'SELECT year FROM fossil_fuels.csv WHERE total >= lower AND total <= upper;'
     if imp == 'firebase':
@@ -19,9 +25,22 @@ def map_fun_5(imp: str, params: list) -> list:
     
     output = []
 
-    partitions = com.getPartitionLocations('/datasets/fossil_fuels.csv').split('\n')
+    partitions = com.getPartitionLocations('/datasets/glaciers.csv').split('\n')
     for p in partitions:
-        part_data = com.readPartition('/datasets/fossil_fuels.csv', p)
+        part_data = com.readPartition('/datasets/glaciers.csv', p)
+
+        # MAP SPECIFIC PARTITON HERE
+        names = part_data.split('\n')[0].split(',')
+        names = [x.strip(' ') for x in names]
+        data = [d.split(',') for d in part_data.split('\n')[1:]]
+        data = [[d_.strip(' ') for d_ in d] for d in data]
+        df = pd.DataFrame(data, columns=names)
+
+        
+
+    partitions = com.getPartitionLocations('/datasets/co2_ppm.csv').split('\n')
+    for p in partitions:
+        part_data = com.readPartition('/datasets/co2_ppm.csv', p)
 
         # MAP SPECIFIC PARTITON HERE
         names = part_data.split('\n')[0].split(',')
@@ -45,7 +64,7 @@ def reduce_fun_5(map_res: list, params: list) -> str:
 
     return output
 
-
+# 'SELECT MONTH(co.Date) AS Month, AVG(co.), co.Average</br>FROM c.o2_ppm.csv co</br>GROUP BY MONTH(co.date);'
 def map_fun_4(imp: str, params: list) -> list:
     pass
 
@@ -54,6 +73,8 @@ def reduce_fun_4(map_res: list, params: list) -> str:
     pass
 
 
+# 'SELECT ff.Year, ff.`Gas Fuel`, ff.`Liquid Fuel`, ff.`Solid Fuel`, gt.Mean</br>
+# FROM fossil_fuels.csv ff</br>LEFT JOIN global_temp.csv gt ON ff.Year = gt.Year</br>WHERE gt.Mean >= temp;'
 def map_fun_3(imp: str, params: list) -> list:
     pass
 
