@@ -71,11 +71,44 @@ def reduce_fun_2(map_res: list, params: list) -> str:
 
 
 def map_fun_1(imp: str, params: list) -> list:
-    pass
+    # 'SELECT GMSL FROM global_mean_sea_level.csv WHERE month = month AND year = year;',
+    if imp == 'firebase':
+        import edfs.firebase.commands as com
+    elif imp == 'mongo':
+        import edfs.mongodb.commands as com
+    elif imp == 'mysql':
+        import edfs.mysql.commands as com
+    else:
+        return 'INVALID INPUT'
+    
+    output = []
+
+    partitions = com.getPartitionLocations('/datasets/global_mean_sea_level.csv').split('\n')
+    for p in partitions:
+        part_data = com.readPartition('/datasets/global_mean_sea_level.csv', p)
+
+        # MAP SPECIFIC PARTITON HERE
+        names = part_data.split('\n')[0].split(',')
+        names = [x.strip(' ') for x in names]
+        data = [d.split(',') for d in part_data.split('\n')[1:]]
+        data = [[d_.strip(' ') for d_ in d] for d in data]
+        df = pd.DataFrame(data, columns=names)
+        df[['Year', 'Month', 'Day']] = df['Time'].str.split('-', expand = True)
+        df = df.astype({'GMSL': float, 'GMSL uncertainty': float, 'Year': int, 'Month': int})
+        part_result = df[(df['Month'] == int(params[0])) & (df['Year'] == int(params[1]))].GMSL.to_list()
+        
+        output.append(part_result)
+        
+    return [np.array(o, dtype=int).tolist() for o in output]
 
 
 def reduce_fun_1(map_res: list, params: list) -> str:
-    pass
+    
+    # REDUCE RESULTS FROM MAP HERE
+    flat_list = [item for sublist in map_res for item in sublist]
+    output = ' '.join(np.unique([str(i) for i in flat_list]))
+
+    return output
 
 
 def map_fun_0(imp: str, params: list) -> list:
@@ -101,8 +134,8 @@ def map_fun_0(imp: str, params: list) -> list:
         data = [d.split(',') for d in part_data.split('\n')[1:]]
         data = [[d_.strip(' ') for d_ in d] for d in data]
         df = pd.DataFrame(data, columns=names)
-        c = df.astype({'Total': int, 'Year': 'int64', 'Per Capita': 'float64'})
-        part_result = c[(c['Total'] >= int(params[0])) & (c['Total'] <= int(params[1]))].Year.to_list()
+        df = df.astype({'Total': int, 'Year': int, 'Per Capita': float})
+        part_result = df[(df['Total'] >= int(params[0])) & (df['Total'] <= int(params[1]))].Year.to_list()
 
         output.append(part_result)
 
