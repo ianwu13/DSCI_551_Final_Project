@@ -84,11 +84,44 @@ def reduce_fun_3(map_res: list, params: list) -> str:
 
 
 def map_fun_2(imp: str, params: list) -> list:
-    pass
+    # 'SELECT year</br>FROM co2_ppm.csv</br>WHERE average >= lower AND average <= upper;',
+    if imp == 'firebase':
+        import edfs.firebase.commands as com
+    elif imp == 'mongo':
+        import edfs.mongodb.commands as com
+    elif imp == 'mysql':
+        import edfs.mysql.commands as com
+    else:
+        return 'INVALID INPUT'
+    
+    output = []
+
+    partitions = com.getPartitionLocations('/datasets/co2_ppm.csv').split('\n')
+    for p in partitions:
+        part_data = com.readPartition('/datasets/co2_ppm.csv', p)
+
+        # MAP SPECIFIC PARTITON HERE
+        names = part_data.split('\n')[0].split(',')
+        names = [x.strip(' ') for x in names]
+        data = [d.split(',') for d in part_data.split('\n')[1:]]
+        data = [[d_.strip(' ') for d_ in d] for d in data]
+        df = pd.DataFrame(data, columns=names)
+        df[['Year', 'Month', 'Day']] = df['Date'].str.split('-', expand = True)
+        df = df.astype({'Average': float, 'Year': int})
+
+        part_result = df[(df['Average'] >= float(params[0])) & (df['Average'] <= float(params[1]))].Year.to_list()
+        output.append(part_result)
+
+    return np.unique([np.array(o, dtype=float).tolist() for o in output])
 
 
 def reduce_fun_2(map_res: list, params: list) -> str:
-    pass
+    
+    # REDUCE RESULTS FROM MAP HERE
+    flat_list = [item for sublist in map_res for item in sublist]
+    output = ' '.join(np.unique([str(i) for i in flat_list]))
+
+    return output
 
 
 def map_fun_1(imp: str, params: list) -> list:
