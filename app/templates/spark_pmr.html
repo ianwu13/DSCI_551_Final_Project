@@ -1,93 +1,48 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 <script type="text/javascript">
-    var imp = "Unset"
+    var pmr_funct = 0
 
-    var pwd = "root/"
+    function funct_select(sel_index) {
+        pmr_funct = sel_index
 
-    var file_pre_1 = '<div style="width: 96px; text-align: center;" onclick="switch_dir(\''
-    var file_pre_2 = '\')"><div style="margin: 0 auto; height: 48px; width: 64px"><svg class="svg-icon" viewBox="0 0 20 20"><path d="M17.064,4.656l-2.05-2.035C14.936,2.544,14.831,2.5,14.721,2.5H3.854c-0.229,0-0.417,0.188-0.417,0.417v14.167c0,0.229,0.188,0.417,0.417,0.417h12.917c0.229,0,0.416-0.188,0.416-0.417V4.952C17.188,4.84,17.144,4.733,17.064,4.656M6.354,3.333h7.917V10H6.354V3.333z M16.354,16.667H4.271V3.333h1.25v7.083c0,0.229,0.188,0.417,0.417,0.417h8.75c0.229,0,0.416-0.188,0.416-0.417V3.886l1.25,1.239V16.667z M13.402,4.688v3.958c0,0.229-0.186,0.417-0.417,0.417c-0.229,0-0.417-0.188-0.417-0.417V4.688c0-0.229,0.188-0.417,0.417-0.417C13.217,4.271,13.402,4.458,13.402,4.688"></path></svg></div>'
-    var file_suf = '</div></br>'
-
-    function update_sel_buttons(selected) {
-        if (selected === "firebase") {
-            document.getElementById('fb_sel').textContent = "Selected"
-            document.getElementById('fb_sel').classList.add('btn-warning')
-            document.getElementById('fb_sel').classList.remove('btn-light')
-            document.getElementById('mongo_sel').textContent = "Select"
-            document.getElementById('mongo_sel').classList.remove('btn-warning')
-            document.getElementById('mongo_sel').classList.add('btn-light')
-            document.getElementById('sql_sel').textContent = "Select"
-            document.getElementById('sql_sel').classList.remove('btn-warning')
-            document.getElementById('sql_sel').classList.add('btn-light')
-            imp = 'firebase'
-        } else if (selected === "mongo") {
-            document.getElementById('mongo_sel').textContent = "Selected"
-            document.getElementById('mongo_sel').classList.add('btn-warning')
-            document.getElementById('mongo_sel').classList.remove('btn-light')
-            document.getElementById('fb_sel').textContent = "Select"
-            document.getElementById('fb_sel').classList.remove('btn-warning')
-            document.getElementById('fb_sel').classList.add('btn-light')
-            document.getElementById('sql_sel').textContent = "Select"
-            document.getElementById('sql_sel').classList.remove('btn-warning')
-            document.getElementById('sql_sel').classList.add('btn-light')
-            imp = 'mongo'
-        } else if (selected === "mysql") {
-            document.getElementById('sql_sel').textContent = "Selected"
-            document.getElementById('sql_sel').classList.add('btn-warning')
-            document.getElementById('sql_sel').classList.remove('btn-light')
-            document.getElementById('mongo_sel').textContent = "Select"
-            document.getElementById('mongo_sel').classList.remove('btn-warning')
-            document.getElementById('mongo_sel').classList.add('btn-light')
-            document.getElementById('fb_sel').textContent = "Select"
-            document.getElementById('fb_sel').classList.remove('btn-warning')
-            document.getElementById('fb_sel').classList.add('btn-light')
-            imp = 'mysql'
-        }
-        dir_render('root/')
-    }
-
-    function make_call(input) {
+        document.getElementById('funct_description').innerHTML = 'Function Description'
+        
         var jsonCall = $.ajax({
             method: 'POST',
-            url: '/command',
+            url: '/pmr_sel',
             dataType: "json",
-            data: {'imp': imp, 'comm': input},
+            data: {'funct': pmr_funct},
             async: false
         });
-        return jsonCall.responseText
+        response = JSON.parse(jsonCall.responseText)
+
+        document.getElementById('explanation_facility').style.removeProperty('display')
+
+        document.getElementById('funct_overview').innerHTML = response['exp_header']
+        document.getElementById('description_text').innerHTML = response['exp_body']
+        document.getElementById('query_area').innerHTML = response['query_form']
     }
 
-    function dir_render(pth) {
-        tmp = document.getElementById('explorer_bar').innerHTML = 'File Explorer - ' + pwd;
-        if (pth !== 'root/') {
-            // ADD .. PATH
-            document.getElementById('file_display').innerHTML = file_pre_1 + ".." + file_pre_2 + "</br>" + ".." + file_suf
-        } else {
-            document.getElementById('file_display').innerHTML = ""
-        }
-        
-        dir_contents = make_call('ls ' + pwd)
-        if (dir_contents !== "") {
-            split = dir_contents.split('</br>')
-            for (let i = 0; i < split.length; i++) {
-                document.getElementById('file_display').innerHTML += file_pre_1 + split[i] + file_pre_2 + "</br>" + split[i] + file_suf
-            }
-        }
+    function call_funct(values) {
+        var jsonCall = $.ajax({
+            method: 'POST',
+            url: '/spark_pmr_call',
+            dataType: "json",
+            data: {'funct': pmr_funct, 'params': values},
+            async: false
+        });
+        response = JSON.parse(jsonCall.responseText)
+        document.getElementById('reduce_res_area').innerHTML = response['res']
+
+        document.getElementById('results_area').style.removeProperty('display')
     }
 
-    function switch_dir(new_dir) {
-        if (new_dir.includes(".csv")) {
-            return
-        }
-        if (new_dir === "..") {
-            pwd = pwd.substring(0, pwd.substring(0, pwd.lastIndexOf('/')).lastIndexOf('/')) + "/";
-        } else {
-            pwd += new_dir + "/"
-        }
-        dir_render(pwd)
+    function get_form_contents() {
+        params = document.getElementsByClassName('query_input')
+        params = Array.prototype.slice.call(params).map(x => x.value)
+        return params.join('\n')
     }
-
 </script>
 
 <div class="container-fluid px-4">
@@ -95,44 +50,64 @@
         <div class="col-xl-3 col-md-6">
             <h1 class="mt-1" styl>Spark-Based PMR</h1>
             <ol class="breadcrumb mb-4">
-                <li class="breadcrumb-item active">Select an implementation to begin</li>
+                <li class="breadcrumb-item active">Spark PMR does not use data from implementations, so implementation does not need to be chosen.</li>
             </ol>
         </div>
-        <div class="col-xl-3 col-md-6" style="margin: auto 0">
-            <div class="card bg-danger text-white mb-4" style="margin: 0">
-                <div class="card-body">Firebase</div>
-                <div class="card-footer d-flex align-items-center justify-content-between" >
-                    <a id="fb_sel" class="btn btn-light" onclick="update_sel_buttons('firebase')">Select</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6" style="margin: auto 0">
-            <div class="card bg-success text-white mb-4" style="margin: 0">
-                <div class="card-body">MongoDB</div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a id="mongo_sel" class="btn btn-light" onclick="update_sel_buttons('mongo')">Select</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6" style="margin: auto 0">
-            <div class="card bg-primary text-white mb-4" style="margin: 0">
-                <div class="card-body">MySQL</div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a id="sql_sel" class="btn btn-light" onclick="update_sel_buttons('mysql')">Select</a>
-                </div>
-            </div>
-        </div>
     </div>
-    <!--SPARK BASED PMR STUFF-->
+    <!--PMR STUFF-->
     <div class="card mb-4">
         <div class="card-header">
-            <i class="fas fa-star me-1"></i>
+            <i class="fas fa-chart-area me-1"></i>
             <a id="explorer_bar">PMR Using Spark</a>   
         </div>
-        <div id="file_display" class="card-body" style="font-family: 'Courier New', monospace;">
-            SELECT ALL, AVERAGE, MAX, MIN, CHANGE
-            FOR RANGE
-            IN {FILE NAME}
+        <div id="pmr_display" class="card-body"> <!--style="font-family: 'Courier New', monospace; display: flex;"-->
+
+            <div class="row" id="pmr_disp">
+                <div class="col-xl-6 col-md-6">
+                    <!--EXPLANATION FACILITY-->
+                    <div class="card" id="explanation_facility" style="width: 90%; margin: auto">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 id='funct_description' class="card-title">Select Search and Analytics Function</h4>
+                                <h6 id='funct_overview' class="card-subtitle mb-2 text-muted" style="margin-top: 4px;margin-bottom: 4px"></h6>
+                                <p id='description_text' class="card-text"></p>
+
+                                <!--SELECTION-->
+                                <div class="btn-group dropend" style="margin-bottom: 16px;">
+                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Select Function
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <!-- Dropdown menu links -->
+                                        <li><a class="dropdown-item" onclick="funct_select(0)">find_year_within_fossil_range</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" onclick="funct_select(1)">find_sea_level_uncertainty</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" onclick="funct_select(2)">find_year_within_co2_range</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" onclick="funct_select(3)">diff_fuel_within_temp_range</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" onclick="funct_select(4)">average_co2_ppm_by_month</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" onclick="funct_select(5)">co2_glacier_within_year_range</a></li>
+                                    </ul>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-6">
+                    <!--RESULTS-->
+                    <div id='query_area' style="margin-bottom: 16px;height: fit-content; width: 100%"></div>
+                    <div id='results_area' style="display: none; height: fit-content; width: 100%">
+                        <div class="list-group">
+                            <a class="list-group-item list-group-item-action list-group-item-danger">Results</a>
+                            <a id='reduce_res_area' class="list-group-item"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
