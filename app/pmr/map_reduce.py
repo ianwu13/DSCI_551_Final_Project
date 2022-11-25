@@ -28,7 +28,7 @@ def map_fun_0(imp: str, params: [lower, upper]) -> list:
         df = df.astype({'Total': 'int64', 'Year': 'int64', 'per capita': 'float64'})
         part_result = list(c[(c['Total'] >= params[0]) & (c['Total'] <= params[1])].Year.values[:])
 
-        output += part_result 
+        output.append(part_result)
 
     return output
 
@@ -36,7 +36,8 @@ def map_fun_0(imp: str, params: [lower, upper]) -> list:
 def reduce_fun_0(map_res: list, params: list) -> str:
     
     # REDUCE RESULTS FROM MAP HERE
-    output = ' '.join(np.unique(map_res))
+    flat_list = [item for sublist in map_res for item in sublist]
+    output = ' '.join(np.unique(flat_list))
 
     return output
 
