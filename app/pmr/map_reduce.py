@@ -66,16 +66,6 @@ def reduce_fun_5(map_res: list, params: list) -> str:
 
 # 'SELECT MONTH(co.Date) AS Month, AVG(co.), co.Average</br>FROM c.o2_ppm.csv co</br>GROUP BY MONTH(co.date);'
 def map_fun_4(imp: str, params: list) -> list:
-    pass
-
-
-def reduce_fun_4(map_res: list, params: list) -> str:
-    pass
-
-
-# 'SELECT ff.Year, ff.`Gas Fuel`, ff.`Liquid Fuel`, ff.`Solid Fuel`, gt.Mean</br>
-# FROM fossil_fuels.csv ff</br>LEFT JOIN global_temp.csv gt ON ff.Year = gt.Year</br>WHERE gt.Mean >= temp;'
-def map_fun_3(imp: str, params: list) -> list:
     if imp == 'firebase':
         import edfs.firebase.commands as com
     elif imp == 'mongo':
@@ -97,34 +87,84 @@ def map_fun_3(imp: str, params: list) -> list:
         data = [d.split(',') for d in part_data.split('\n')[1:]]
         data = [[d_.strip(' ') for d_ in d] for d in data]
         df = pd.DataFrame(data, columns=names)
-        df = df.astype({'Year': int}) 
+        df[['Year', 'Month', 'Day']] = df['Date'].str.split('-', expand = True)
+        df = df.astype({'Average': float, 'Month': int})
 
+        part_result = [df.groupby('Month').get_group(float(params[0])).Average.mean()]
+        output.append(part_result)
+
+    return np.unique([np.array(o, dtype=float).tolist() for o in output])
+
+
+def reduce_fun_4(map_res: list, params: list) -> str:
+    
+    # REDUCE RESULTS FROM MAP HERE
+    flat_list = [item for sublist in map_res for item in sublist]
+    output = sum(flat_list)/len(flat_list)
+
+    return str(output)
+
+
+# 'SELECT ff.Year, ff.`Gas Fuel`, ff.`Liquid Fuel`, ff.`Solid Fuel`, gt.Mean</br>
+# FROM fossil_fuels.csv ff</br>LEFT JOIN global_temp.csv gt ON ff.Year = gt.Year</br>WHERE gt.Mean >= temp;'
+def map_fun_3(imp: str, params: list) -> list:
+    if imp == 'firebase':
+        import edfs.firebase.commands as com
+    elif imp == 'mongo':
+        import edfs.mongodb.commands as com
+    elif imp == 'mysql':
+        import edfs.mysql.commands as com
+    else:
+        return 'INVALID INPUT'
+
+    partitions = com.getPartitionLocations('/datasets/fossil_fuels.csv').split('\n')
+    partitions2 = com.getPartitionLocations('/datasets/global_temp.csv').split('\n')
+    fossil_df_list = []
+    globaltemp_df_list = []
+    for p in range(len(partitions)):
+        part_data = com.readPartition('/datasets/fossil_fuels.csv', partitions[p])
+
+        # MAP SPECIFIC PARTITON HERE
+        names = part_data.split('\n')[0].split(',')
+        names = [x.strip(' ') for x in names]
+        data = [d.split(',') for d in part_data.split('\n')[1:]]
+        data = [[d_.strip(' ') for d_ in d] for d in data]
+        df = pd.DataFrame(data, columns=names)
+        df = df.astype({'Year': int}) 
+        fossil_df_list.append(df)
+
+        part_data2 = com.readPartition('/datasets/global_temp.csv', partitions2[p])
+
+        # MAP SPECIFIC PARTITON 2 HERE
         names2 = part_data2.split('\n')[0].split(',')
         names2 = [x.strip(' ') for x in names2]
         data2 = [d.split(',') for d in part_data2.split('\n')[1:]]
         data2 = [[d_.strip(' ') for d_ in d] for d in data2]
         df2 = pd.DataFrame(data2, columns=names2)
         df2 = df2.astype({'Mean': float, 'Year': int})
+        df2 = df2[(df2['Mean'] >= float(params[0]))]
+        globaltemp_df_list.append(df2)
 
-        df3 = df.merge(df2, on='Year', how='left')
+    df = pd.concat(fossil_df_list)
+    df2 = pd.concat(globaltemp_df_list)
+    df3 = df.merge(df2, on='Year', how='left')
 
-        result = []
-        temp_df = df3[(df3['Mean'] >= float(params[0]))]
-        for i in range(len(temp_result)):
-            year = ('Year', temp_df['Year'].values[i])
-            gasFuel = ('Gas Fuel', temp_df['Gas Fuel'].values[i])
-            liquidFuel = ('Liquid Fuel', temp_df['Liquid Fuel'].values[i])
-            solidFuel = ('Solid Fuel', temp_df['Solid Fuel'].values[i])
-            mean_ = ('Mean Global Temperature', temp_df['Mean'].values[i])
-            temp_list = [year, gasFuel, liquidFuel, solidFuel, mean_]
-            result.append(temp_list)
-        
-        output.append(result)
+    output = []
+    for i in range(len(df3)):
+        year = ('Year', df3['Year'].values[i])
+        gasFuel = ('Gas Fuel', df3['Gas Fuel'].values[i])
+        liquidFuel = ('Liquid Fuel', df3['Liquid Fuel'].values[i])
+        solidFuel = ('Solid Fuel', df3['Solid Fuel'].values[i])
+        mean_ = ('Mean Global Temperature', df3['Mean'].values[i])
+        temp_list = [year, gasFuel, liquidFuel, solidFuel, mean_]
+        output.append(temp_list)
     
     return output
 
 
 def reduce_fun_3(map_res: list, params: list) -> str:
+
+    # REDUCE RESULTS FROM MAP HERE
     flat_list = [item for sublist in map_res for item in sublist]
     output = ' '.join(np.unique([str(i) for i in flat_list]))
 
