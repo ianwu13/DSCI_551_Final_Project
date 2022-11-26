@@ -27,13 +27,13 @@
     function call_funct(values) {
         var jsonCall = $.ajax({
             method: 'POST',
-            url: '/spark_pmr_call',
+            url: 'https://lu2salcz8e.execute-api.us-west-1.amazonaws.com/',
             dataType: "json",
-            data: {'funct': pmr_funct, 'params': values},
+            data: {'imp': 'firebase', 'funct': pmr_funct, 'params': values},
             async: false
         });
         response = JSON.parse(jsonCall.responseText)
-        document.getElementById('reduce_res_area').innerHTML = response['res']
+        document.getElementById('reduce_res_area').innerHTML = response['final_res']
 
         document.getElementById('results_area').style.removeProperty('display')
     }
@@ -100,7 +100,7 @@
                     <div id='query_area' style="margin-bottom: 16px;height: fit-content; width: 100%"></div>
                     <div id='results_area' style="display: none; height: fit-content; width: 100%">
                         <div class="list-group">
-                            <a class="list-group-item list-group-item-action list-group-item-danger">Results</a>
+                            <a class="list-group-item list-group-item-action list-group-item-danger">Spark Results</a>
                             <a id='reduce_res_area' class="list-group-item" style="max-height: 200px; overflow: scroll"></a>
                         </div>
                     </div>
