@@ -88,8 +88,6 @@
                                         <li><a class="dropdown-item" onclick="funct_select(3)">diff_fuel_within_temp_range</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" onclick="funct_select(4)">average_co2_ppm_by_month</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" onclick="funct_select(5)">co2_glacier_within_year_range</a></li>
                                     </ul>
                                 </div>
                                 
@@ -103,7 +101,7 @@
                     <div id='results_area' style="display: none; height: fit-content; width: 100%">
                         <div class="list-group">
                             <a class="list-group-item list-group-item-action list-group-item-danger">Results</a>
-                            <a id='reduce_res_area' class="list-group-item"></a>
+                            <a id='reduce_res_area' class="list-group-item" style="max-height: 200px; overflow: scroll"></a>
                         </div>
                     </div>
                 </div>

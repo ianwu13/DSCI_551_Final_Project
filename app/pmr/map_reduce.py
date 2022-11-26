@@ -10,60 +10,6 @@ import numpy as np
 import pmr.html_templates as funct_data
 
 
-# 'SELECT YEAR(co.Date) AS Year, gl.`Mean cumulative mass balance`, co.Average</br>FROM glaciers.csv gl
-# LEFT JOIN co2_ppm.csv co ON gl.Year = co.Year</br>WHERE Year >= start_year AND Year <= end_year;'
-def map_fun_5(imp: str, params: list) -> list:
-    # 'SELECT year FROM fossil_fuels.csv WHERE total >= lower AND total <= upper;'
-    if imp == 'firebase':
-        import edfs.firebase.commands as com
-    elif imp == 'mongo':
-        import edfs.mongodb.commands as com
-    elif imp == 'mysql':
-        import edfs.mysql.commands as com
-    else:
-        return 'INVALID INPUT'
-    
-    output = []
-
-    partitions = com.getPartitionLocations('/datasets/glaciers.csv').split('\n')
-    for p in partitions:
-        part_data = com.readPartition('/datasets/glaciers.csv', p)
-
-        # MAP SPECIFIC PARTITON HERE
-        names = part_data.split('\n')[0].split(',')
-        names = [x.strip(' ') for x in names]
-        data = [d.split(',') for d in part_data.split('\n')[1:]]
-        data = [[d_.strip(' ') for d_ in d] for d in data]
-        df = pd.DataFrame(data, columns=names)
-
-        
-
-    partitions = com.getPartitionLocations('/datasets/co2_ppm.csv').split('\n')
-    for p in partitions:
-        part_data = com.readPartition('/datasets/co2_ppm.csv', p)
-
-        # MAP SPECIFIC PARTITON HERE
-        names = part_data.split('\n')[0].split(',')
-        names = [x.strip(' ') for x in names]
-        data = [d.split(',') for d in part_data.split('\n')[1:]]
-        data = [[d_.strip(' ') for d_ in d] for d in data]
-        df = pd.DataFrame(data, columns=names)
-        c = df.astype({'Total': int, 'Year': 'int64', 'Per Capita': 'float64'})
-        part_result = c[(c['Total'] >= int(params[0])) & (c['Total'] <= int(params[1]))].Year.to_list()
-
-        output.append(part_result)
-
-    return [np.array(o, dtype=int).tolist() for o in output]
-
-
-def reduce_fun_5(map_res: list, params: list) -> str:
-    
-    # REDUCE RESULTS FROM MAP HERE
-    flat_list = [item for sublist in map_res for item in sublist]
-    output = ' '.join(np.unique([str(i) for i in flat_list]))
-
-    return output
-
 # 'SELECT MONTH(co.Date) AS Month, AVG(co.), co.Average</br>FROM c.o2_ppm.csv co</br>GROUP BY MONTH(co.date);'
 def map_fun_4(imp: str, params: list) -> list:
     if imp == 'firebase':
@@ -293,7 +239,7 @@ def reduce_fun_0(map_res: list, params: list) -> str:
     return output
 
 
-funct_guide = [(map_fun_0, reduce_fun_0), (map_fun_1, reduce_fun_1), (map_fun_2, reduce_fun_2), (map_fun_3, reduce_fun_3), (map_fun_4, reduce_fun_4), (map_fun_5, reduce_fun_5)]
+funct_guide = [(map_fun_0, reduce_fun_0), (map_fun_1, reduce_fun_1), (map_fun_2, reduce_fun_2), (map_fun_3, reduce_fun_3), (map_fun_4, reduce_fun_4)]
 
 
 def pmr_wrapper(imp: str, funct_id: int, params: list):

@@ -9,8 +9,6 @@ exp_headers = [
     'SELECT ff.Year, ff.`Gas Fuel`, ff.`Liquid Fuel`, ff.`Solid Fuel`, gt.Mean</br>FROM fossil_fuels.csv ff</br>LEFT JOIN global_temp.csv gt ON ff.Year = gt.Year</br>WHERE gt.Mean >= temp;',
     # average_co2_ppm_by_month
     'SELECT MONTH(co.Date) AS Month, AVG(co.), co.Average</br>FROM c.o2_ppm.csv co</br>GROUP BY MONTH(co.date);'
-    # co2_glacier_within_year_range
-    'SELECT YEAR(co.Date) AS Year, gl.`Mean cumulative mass balance`, co.Average</br>FROM glaciers.csv gl</br>LEFT JOIN co2_ppm.csv co ON gl.Year = co.Year</br>WHERE Year >= start_year AND Year <= end_year;',
 ]
 
 exp_bodies = [
@@ -18,8 +16,7 @@ exp_bodies = [
     'In this case, mapPartiton(p) takes find_sea_level_uncertainty in partition p, output the sea level uncertainty level by month and year. Reduce function extracts month and year information from the ‘Time’ column to create columns ‘month’ and ‘year’, then identifies and returns the uncertainty of sea level that fits the specified month and year values.',
     'In this case, mapPartiton(p) takes co2_ppm in partition p, output dates with different levels of average co2 emissions. Reduce function extracts the year information from ‘Date’ to create the ‘year’ column, then identifies and returns the years with average co2 emission level that fits the specified value range.',
     'In this case, mapPartiton(p) takes fossil_fuel and global_temp in partition p, output different types of fuel and the year when global temperature is greater than a certain value. Reduce function then identifies and returns the years and amount of gas, liquid and solid fuel when the global temperature is greater than a specified value.',
-    'In this case, mapPartiton(p) takes co2_ppm in partition p, outputs key value pairs corresponding to each month of the year. Reduce function combines these key value pairs, then identifies and returns the average co2 emission level for each month.',
-    'In this case, mapPartiton(p) takes glaciers and co2_ppm in partition p, output dates with different levels of average co2 emissions and mean cumulative mass balance of glaciers. Reduce function extracts the year information from ‘Date’ to create the ‘Year’ column, then identifies and returns the average co2 emission level and mean cumulative mass balance of glaciers within a specified year range.'
+    'In this case, mapPartiton(p) takes co2_ppm in partition p, outputs key value pairs corresponding to each month of the year. Reduce function combines these key value pairs, then identifies and returns the average co2 emission level for each month.'
 ]
 
 form_names = [
@@ -28,7 +25,6 @@ form_names = [
     'find_year_within_co2_range.html', # 'Parameters are a lower bound FLOAT value and upper bound FLOAT value for monthly mean CO2',
     'diff_fuel_within_temp_range.html', # 'Parameter is a FLOAT value for average global mean temperature',
     'average_co2_ppm_by_month.html', # Empty form since funciton needs no parameters
-    'co2_glacier_within_year_range.html' # 'Parameters are an INT value for start year and an INT value for end year'
 ]
 
 funct_forms = [''.join([line.rstrip('\n') for line in open(f'pmr/forms/{f}', 'r').readlines()]) for f in form_names]

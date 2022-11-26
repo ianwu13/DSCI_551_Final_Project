@@ -129,11 +129,6 @@ def pmr_call():
     return map_reduce.call_funct(request.form)
 
 
-@app.route(f'/spark_pmr_call', methods=['POST'])
-def spark_pmr_call():
-    return {'res': str(request.form)}
-
-
 if __name__ == '__main__':
     # IMPORTANT: change url to the site where you are editing this file.
     # website_url = 'cocalc4.ai-camp.org'
