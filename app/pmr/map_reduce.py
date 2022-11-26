@@ -111,11 +111,11 @@ def map_fun_3(imp: str, params: list) -> list:
         result = []
         temp_df = df3[(df3['Mean'] >= float(params[0]))]
         for i in range(len(temp_result)):
-            year = 'Year: %s' % temp_df['Year'].values[i]
-            gasFuel = 'Gas Fuel: %s' % temp_df['Gas Fuel'].values[i]
-            liquidFuel = 'Liquid Fuel: %s' % temp_df['Liquid Fuel'].values[i]
-            solidFuel = 'Solid Fuel: %s' % temp_df['Solid Fuel'].values[i]
-            mean_ = 'Mean Global Temperature: %s' % temp_df['Mean'].values[i]
+            year = ('Year', temp_df['Year'].values[i])
+            gasFuel = ('Gas Fuel', temp_df['Gas Fuel'].values[i])
+            liquidFuel = ('Liquid Fuel', temp_df['Liquid Fuel'].values[i])
+            solidFuel = ('Solid Fuel', temp_df['Solid Fuel'].values[i])
+            mean_ = ('Mean Global Temperature', temp_df['Mean'].values[i])
             temp_list = [year, gasFuel, liquidFuel, solidFuel, mean_]
             result.append(temp_list)
         
