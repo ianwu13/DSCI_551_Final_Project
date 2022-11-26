@@ -3,9 +3,9 @@ from pyspark import SparkContext as sc
 import pyspark.sql.functions as fc
 from pyspark.sql.window import Window
 
-mn_private_ip = '54.219.78.124'
+mn_private_ip = ''
 
-sess = SparkSession.builder.appName("IanApp").master(f"spark://{mn_private_ip}:7077")\
+spark = SparkSession.builder.appName("IanApp").master(f"spark://{mn_private_ip}:7077")\
     .config("spark.driver.host", mn_private_ip)\
     .config('spark.driver.bindAddress', '0.0.0.0')\
     .config("spark.dynamicAllocation.enabled", 'false')\
@@ -14,15 +14,21 @@ sess = SparkSession.builder.appName("IanApp").master(f"spark://{mn_private_ip}:7
     # .config("spark.shuffle.service.enabled", "false")\
     # .config("spark.dynamicAllocation.enabled", "false")\
 
-# print(sess.catalog.listTables())
-tmp = sess.sparkContext.parallelize([1, 2, 1])
-print(tmp.count())
-# tmp = sess.read.csv('../data/glaciers_csv.csv')
-# tmp.show() 
+co2 = spark.read.json('co2_ppm.csv')
+glaciers = spark.read.json('glaciers_csv.csv')
+temp = spark.read.json('global_temp.csv')
+ff = spark.read.json('fossil_fuels.csv')
+sl = spark.read.json('global_mean_sea_level.csv')
 
-'''
+
+
+
+
+
+
+
+
 from pyspark.sql import SparkSession
-from pyspark import SparkContext as sc
 import pyspark.sql.functions as fc
 from pyspark.sql.window import Window
 import pymysql
@@ -286,4 +292,3 @@ def main(weather, area, gl, ti, flag):
 
 
 #main('Clouds', 'West LA', '34.061779, -118.2904775', 'night', 1)
-'''
