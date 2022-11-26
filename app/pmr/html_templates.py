@@ -1,10 +1,10 @@
 exp_headers = [
     # find_year_within_fossil_range
-    'SELECT year</br>FROM fossil_fuels.csv</br>WHERE total >= lower AND total <= upper;',
-    # find_sea_level_uncertainty
-    'SELECT `GMSL_uncertainty`</br>FROM global_mean_sea_level.csv</br>WHERE month = month AND year = year;',
+    'SELECT year</br>FROM fossil_fuels.csv</br>WHERE Total >= lower AND Total <= upper;',
+    # find_sea_level
+    'SELECT GMSL</br>FROM global_mean_sea_level.csv</br>WHERE Month = month AND Year = year;',
     # find_year_within_co2_range
-    'SELECT year</br>FROM co2_ppm.csv</br>WHERE average >= lower AND average <= upper;',
+    'SELECT year</br>FROM co2_ppm.csv</br>WHERE Average >= lower AND Average <= upper;',
     # diff_fuel_within_temp_range
     'SELECT ff.Year, ff.`Gas Fuel`, ff.`Liquid Fuel`, ff.`Solid Fuel`, gt.Mean</br>FROM fossil_fuels.csv ff</br>LEFT JOIN global_temp.csv gt ON ff.Year = gt.Year</br>WHERE gt.Mean >= temp;',
     # average_co2_ppm_by_month
@@ -21,7 +21,7 @@ exp_bodies = [
 
 form_names = [
     'find_year_within_fossil_range.html', # 'Parameters are a lower bound INT value and upper bound INT value for total carbon emission from fossil fuel',
-    'find_sea_level_uncertainty.html', # 'Parameters are an INT value for month and an INT value for year',
+    'find_sea_level.html', # 'Parameters are an INT value for month and an INT value for year',
     'find_year_within_co2_range.html', # 'Parameters are a lower bound FLOAT value and upper bound FLOAT value for monthly mean CO2',
     'diff_fuel_within_temp_range.html', # 'Parameter is a FLOAT value for average global mean temperature',
     'average_co2_ppm_by_month.html', # Empty form since funciton needs no parameters

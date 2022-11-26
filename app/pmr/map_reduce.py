@@ -4,14 +4,9 @@ import numpy as np
 import pmr.html_templates as funct_data
 
 
-import pandas as pd
-import numpy as np
-
-import pmr.html_templates as funct_data
-
-
 # 'SELECT MONTH(co.Date) AS Month, AVG(co.), co.Average</br>FROM c.o2_ppm.csv co</br>GROUP BY MONTH(co.date);'
 def map_fun_4(imp: str, params: list) -> list:
+    # 'SELECT MONTH(co.Date) AS Month, AVG(co.), co.Average</br>FROM c.o2_ppm.csv co</br>GROUP BY MONTH(co.date);'
     if imp == 'firebase':
         import edfs.firebase.commands as com
     elif imp == 'mongo':
@@ -36,24 +31,35 @@ def map_fun_4(imp: str, params: list) -> list:
         df[['Year', 'Month', 'Day']] = df['Date'].str.split('-', expand = True)
         df = df.astype({'Average': float, 'Month': int})
 
-        part_result = [df.groupby('Month').get_group(float(params[0])).Average.mean()]
+        temp_df = df.groupby('Month').Average.mean()
+        part_result = [(temp_df.index[i], temp_df.iloc[i]) for i in range(len(temp_df))]
         output.append(part_result)
 
-    return np.unique([np.array(o, dtype=float).tolist() for o in output])
+    return output
 
 
 def reduce_fun_4(map_res: list, params: list) -> str:
     
     # REDUCE RESULTS FROM MAP HERE
     flat_list = [item for sublist in map_res for item in sublist]
-    output = sum(flat_list)/len(flat_list)
+    months = set([key for key, value in flat_list])
 
-    return str(output)
+    temp = []
+    for month in months:
+        sum_, count = 0, 0
+        for k,v in flat_list:
+            if k == month:
+                sum_ += v
+                count += 1
+        temp.append((month, sum_/count))
+    output = ' '.join(np.unique([str(i) for i in temp]))
+
+    return output
 
 
-# 'SELECT ff.Year, ff.`Gas Fuel`, ff.`Liquid Fuel`, ff.`Solid Fuel`, gt.Mean</br>
-# FROM fossil_fuels.csv ff</br>LEFT JOIN global_temp.csv gt ON ff.Year = gt.Year</br>WHERE gt.Mean >= temp;'
 def map_fun_3(imp: str, params: list) -> list:
+    # 'SELECT ff.Year, ff.`Gas Fuel`, ff.`Liquid Fuel`, ff.`Solid Fuel`, gt.Mean</br>
+    # FROM fossil_fuels.csv ff</br>LEFT JOIN global_temp.csv gt ON ff.Year = gt.Year</br>WHERE gt.Mean >= temp;'
     if imp == 'firebase':
         import edfs.firebase.commands as com
     elif imp == 'mongo':
