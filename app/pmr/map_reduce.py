@@ -76,11 +76,59 @@ def reduce_fun_4(map_res: list, params: list) -> str:
 # 'SELECT ff.Year, ff.`Gas Fuel`, ff.`Liquid Fuel`, ff.`Solid Fuel`, gt.Mean</br>
 # FROM fossil_fuels.csv ff</br>LEFT JOIN global_temp.csv gt ON ff.Year = gt.Year</br>WHERE gt.Mean >= temp;'
 def map_fun_3(imp: str, params: list) -> list:
-    pass
+    if imp == 'firebase':
+        import edfs.firebase.commands as com
+    elif imp == 'mongo':
+        import edfs.mongodb.commands as com
+    elif imp == 'mysql':
+        import edfs.mysql.commands as com
+    else:
+        return 'INVALID INPUT'
+    
+    output = []
+
+    partitions = com.getPartitionLocations('/datasets/co2_ppm.csv').split('\n')
+    for p in partitions:
+        part_data = com.readPartition('/datasets/co2_ppm.csv', p)
+
+        # MAP SPECIFIC PARTITON HERE
+        names = part_data.split('\n')[0].split(',')
+        names = [x.strip(' ') for x in names]
+        data = [d.split(',') for d in part_data.split('\n')[1:]]
+        data = [[d_.strip(' ') for d_ in d] for d in data]
+        df = pd.DataFrame(data, columns=names)
+        df = df.astype({'Year': int}) 
+
+        names2 = part_data2.split('\n')[0].split(',')
+        names2 = [x.strip(' ') for x in names2]
+        data2 = [d.split(',') for d in part_data2.split('\n')[1:]]
+        data2 = [[d_.strip(' ') for d_ in d] for d in data2]
+        df2 = pd.DataFrame(data2, columns=names2)
+        df2 = df2.astype({'Mean': float, 'Year': int})
+
+        df3 = df.merge(df2, on='Year', how='left')
+
+        result = []
+        temp_df = df3[(df3['Mean'] >= float(params[0]))]
+        for i in range(len(temp_result)):
+            year = 'Year: %s' % temp_df['Year'].values[i]
+            gasFuel = 'Gas Fuel: %s' % temp_df['Gas Fuel'].values[i]
+            liquidFuel = 'Liquid Fuel: %s' % temp_df['Liquid Fuel'].values[i]
+            solidFuel = 'Solid Fuel: %s' % temp_df['Solid Fuel'].values[i]
+            mean_ = 'Mean Global Temperature: %s' % temp_df['Mean'].values[i]
+            temp_list = [year, gasFuel, liquidFuel, solidFuel, mean_]
+            result.append(temp_list)
+        
+        output.append(result)
+    
+    return output
 
 
 def reduce_fun_3(map_res: list, params: list) -> str:
-    pass
+    flat_list = [item for sublist in map_res for item in sublist]
+    output = ' '.join(np.unique([str(i) for i in flat_list]))
+
+    return output
 
 
 def map_fun_2(imp: str, params: list) -> list:
