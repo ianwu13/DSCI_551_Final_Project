@@ -27,7 +27,7 @@
     function call_funct(values) {
         var jsonCall = $.ajax({
             method: 'POST',
-            url: 'https://lu2salcz8e.execute-api.us-west-1.amazonaws.com/',
+            url: 'https://lu2salcz8e.execute-api.us-west-1.amazonaws.com/spark_pmr',
             dataType: "json",
             data: {'imp': 'firebase', 'funct': pmr_funct, 'params': values},
             async: false
