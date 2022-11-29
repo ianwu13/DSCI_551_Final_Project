@@ -43,7 +43,7 @@ def create_namenode_structure():
         )
     )
     metadata.create_all(engine)
-    stmt = "insert into directory_structure (parent, children) values (NULL,'ROOT');"
+    stmt = "insert into directory_structure (parent, children) values (NULL,'root');"
     engine.execute(stmt)
 
     return "NAMENODE STRUCTURE CREATED"
@@ -92,7 +92,7 @@ def preprocess_path(path: str):
         path = path[:-1]
     if path and path[0] == '/':
         path = path[1:]
-    if path[:4] == 'ROOT':
+    if path[:4].upper() == 'ROOT':
         path = path[4:]
         if path and path[0] == '/':
             path = path[1:]

@@ -7,7 +7,7 @@ exp_headers = [
     'SELECT count(*)</br>FROM co2_ppm.csv</br>WHERE Average >= lower AND Average <= upper;',
     # average_co2_ppm_by_month
     'SELECT MONTH(co.Date), AVG(co.Average)</br>FROM co2_ppm.csv co</br>GROUP BY MONTH(co.date);',
-    # diff_fuel_within_temp_range GLOBAL TEMP GLACIERS ONE
+    # diff_fuel_within_temp_range
     'SELECT gt.Mean avg_num_anomalies, gc.`Mean cumulative mass balance`</br>FROM glaciers_csv.csv gc</br>INNER JOIN global_temp.csv gt </br>ON gc.Year = gt.Year</br>WHERE gt.Source = "GISTEMP"'
 ]
 

@@ -4,13 +4,10 @@ from utils import *
 
 import pmr.map_reduce as map_reduce
 
-fb_com = None
-mdb_com = None
-sql_com = None
 
 # setup the webserver
 # port may need to be changed if there are multiple flask servers running on same server
-port = 30000
+port = 30001
 base_url = get_base_url(port)
 
 # if the base url is not empty, then the server is running in development, and we need to specify the static folder so that the static files are served
@@ -53,26 +50,13 @@ def example():
 
 @app.route(f'/command', methods=['POST'])
 def command_caller():
-    global fb_com, mdb_com, sql_com
     imp = request.form['imp']
     if imp == 'firebase':
-        if fb_com:
-            com = fb_com
-        else:
-            import edfs.firebase.commands as com
-            fb_com = com
+        import edfs.firebase.commands as com
     elif imp == 'mongo':
-        if mdb_com:
-            com = mdb_com
-        else:
-            import edfs.mongodb.commands as com
-            mdb_com = com
+        import edfs.mongodb.commands as com
     elif imp == 'mysql':
-        if sql_com:
-            com = sql_com
-        else:
-            import edfs.mysql.commands as com
-            sql_com = com
+        import edfs.mysql.commands as com
     else:
         return 'INVALID INPUT' 
      

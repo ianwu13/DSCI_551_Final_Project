@@ -1,6 +1,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 <script type="text/javascript">
+    var imp = 'firebase'
     var pmr_funct = 0
 
     function funct_select(sel_index) {
@@ -29,7 +30,7 @@
             method: 'POST',
             url: 'https://lu2salcz8e.execute-api.us-west-1.amazonaws.com/spark_pmr',
             dataType: "json",
-            data: {'imp': 'firebase', 'funct': pmr_funct, 'params': values},
+            data: {'funct': pmr_funct, 'params': values},
             async: false
         });
         response = JSON.parse(jsonCall.responseText)
@@ -87,7 +88,7 @@
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" onclick="funct_select(3)">diff_fuel_within_temp_range</a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" onclick="funct_select(4)">average_co2_ppm_by_month</a></li>
+                                        <li><a class="dropdown-item" onclick="funct_select(4)">temperature_anomalies_and_glacier_mass</a></li>
                                     </ul>
                                 </div>
                                 
